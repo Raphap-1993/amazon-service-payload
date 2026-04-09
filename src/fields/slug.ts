@@ -1,6 +1,6 @@
 import type { Field } from 'payload'
 
-import { formatSlug } from '@/lib/formatSlug'
+import { formatSlug } from '../lib/formatSlug.ts'
 
 export const slugField = (sourceField = 'title'): Field => ({
   name: 'slug',
@@ -29,4 +29,3 @@ export const slugField = (sourceField = 'title'): Field => ({
     ],
   },
 })
-

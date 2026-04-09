@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 import type { HomePageData } from '@/lib/home/types'
@@ -24,7 +25,14 @@ export function SiteHeader({ brand, cta, navItems }: SiteHeaderProps) {
       <div className="container">
         <Link aria-label={brand.name} className={hasLogo ? 'brand-logo-link' : 'brand-lockup'} href="/">
           {brand.logoUrl ? (
-            <img alt={brand.logoAlt || brand.name} className="brand-logo" src={brand.logoUrl} />
+            <Image
+              alt={brand.logoAlt || brand.name}
+              className="brand-logo"
+              height={74}
+              sizes="(max-width: 768px) 13rem, 17rem"
+              src={brand.logoUrl}
+              width={272}
+            />
           ) : (
             <div className="brand-lockup__mark" aria-hidden="true">
               <span>{initials}</span>

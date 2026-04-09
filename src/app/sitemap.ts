@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
 
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://placeholder.local:3000'
-const siteUrl = /^https?:\/\//.test(rawSiteUrl) ? rawSiteUrl : `https://${rawSiteUrl}`
-const metadataBase = new URL(siteUrl)
+import { getMetadataBase } from '@/lib/site-config'
+
+const metadataBase = getMetadataBase()
 
 const routes = [
   { path: '/', changeFrequency: 'weekly' as const, priority: 1 },

@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import type { HomePageData } from '@/lib/home/types'
 
 import { SectionHeading } from '../primitives/SectionHeading'
@@ -26,7 +28,13 @@ export function AboutSection({ section }: AboutSectionProps) {
 
         <div className="about-media">
           {section.imageUrl ? (
-            <img alt={section.imageAlt} src={section.imageUrl} />
+            <Image
+              alt={section.imageAlt}
+              className="about-media__image"
+              fill
+              sizes="(max-width: 960px) 100vw, 48vw"
+              src={section.imageUrl}
+            />
           ) : (
             <div className="about-placeholder">{section.placeholderLabel}</div>
           )}

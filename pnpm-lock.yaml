@@ -66,6 +66,13 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+    optionalDependencies:
+      lightningcss-darwin-arm64:
+        specifier: 1.32.0
+        version: 1.32.0
+      lightningcss-darwin-x64:
+        specifier: 1.32.0
+        version: 1.32.0
 
 packages:
 

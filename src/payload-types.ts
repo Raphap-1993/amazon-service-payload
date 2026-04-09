@@ -70,9 +70,9 @@ export interface Config {
     users: User;
     media: Media;
     services: Service;
+    'contact-submissions': ContactSubmission;
     faqs: Faq;
     testimonials: Testimonial;
-    'contact-submissions': ContactSubmission;
     'special-module-entries': SpecialModuleEntry;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -84,9 +84,9 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
-    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'special-module-entries': SpecialModuleEntriesSelect<false> | SpecialModuleEntriesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -151,8 +151,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  name: string;
-  role: 'admin' | 'editor';
+  name?: string | null;
+  role: 'superadmin' | 'admin' | 'editor';
   isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -201,7 +201,9 @@ export interface Media {
  */
 export interface Service {
   id: number;
+  published?: boolean | null;
   title: string;
+  homeOrder?: number | null;
   slug: string;
   summary: string;
   content?: {
@@ -220,38 +222,20 @@ export interface Service {
     [k: string]: unknown;
   } | null;
   featuredImage?: (number | null) | Media;
+  icon?: string | null;
+  cardMeta?: string | null;
   isFeatured?: boolean | null;
-  metaTitle?: string | null;
-  metaDescription?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faqs".
- */
-export interface Faq {
-  id: number;
-  question: string;
-  answer: string;
-  category?: string | null;
-  relatedService?: (number | null) | Service;
-  isPublished?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials".
- */
-export interface Testimonial {
-  id: number;
-  name: string;
-  role?: string | null;
-  company?: string | null;
-  quote: string;
-  photo?: (number | null) | Media;
-  isFeatured?: boolean | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    canonicalUrl?: string | null;
+    /**
+     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector.
+     */
+    ogImage?: (number | null) | Media;
+    noIndex?: boolean | null;
+    schemaType?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -264,10 +248,41 @@ export interface ContactSubmission {
   name: string;
   email: string;
   phone?: string | null;
+  company?: string | null;
   message: string;
   sourcePage?: string | null;
-  status: 'new' | 'reviewing' | 'closed';
+  status: 'new' | 'in-review' | 'closed';
   notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  published?: boolean | null;
+  question: string;
+  answer: string;
+  category?: string | null;
+  relatedService?: (number | null) | Service;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  published?: boolean | null;
+  name: string;
+  role?: string | null;
+  company?: string | null;
+  quote: string;
+  photo?: (number | null) | Media;
+  isFeatured?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -278,21 +293,18 @@ export interface ContactSubmission {
 export interface SpecialModuleEntry {
   id: number;
   title: string;
-  slug: string;
+  slug?: string | null;
   publicCode: string;
-  documentType: 'code' | 'dni' | 'ruc';
-  documentNumber: string;
-  status: 'active' | 'expired' | 'pending';
+  documentType?: string | null;
+  documentNumber?: string | null;
+  moduleStatus: 'active' | 'inactive' | 'expired';
   issuedAt?: string | null;
   expiresAt?: string | null;
-  ownerName?: string | null;
-  publicSummary?: string | null;
+  summary?: string | null;
   publicNotes?: string | null;
-  /**
-   * Uso interno. No debe exponerse en flujos públicos.
-   */
   internalNotes?: string | null;
   attachment?: (number | null) | Media;
+  ownerName?: string | null;
   isPublic?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -334,16 +346,16 @@ export interface PayloadLockedDocument {
         value: number | Service;
       } | null)
     | ({
+        relationTo: 'contact-submissions';
+        value: number | ContactSubmission;
+      } | null)
+    | ({
         relationTo: 'faqs';
         value: number | Faq;
       } | null)
     | ({
         relationTo: 'testimonials';
         value: number | Testimonial;
-      } | null)
-    | ({
-        relationTo: 'contact-submissions';
-        value: number | ContactSubmission;
       } | null)
     | ({
         relationTo: 'special-module-entries';
@@ -442,41 +454,26 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "services_select".
  */
 export interface ServicesSelect<T extends boolean = true> {
+  published?: T;
   title?: T;
+  homeOrder?: T;
   slug?: T;
   summary?: T;
   content?: T;
   featuredImage?: T;
+  icon?: T;
+  cardMeta?: T;
   isFeatured?: T;
-  metaTitle?: T;
-  metaDescription?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faqs_select".
- */
-export interface FaqsSelect<T extends boolean = true> {
-  question?: T;
-  answer?: T;
-  category?: T;
-  relatedService?: T;
-  isPublished?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials_select".
- */
-export interface TestimonialsSelect<T extends boolean = true> {
-  name?: T;
-  role?: T;
-  company?: T;
-  quote?: T;
-  photo?: T;
-  isFeatured?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        canonicalUrl?: T;
+        ogImage?: T;
+        noIndex?: T;
+        schemaType?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -488,10 +485,39 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   name?: T;
   email?: T;
   phone?: T;
+  company?: T;
   message?: T;
   sourcePage?: T;
   status?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  published?: T;
+  question?: T;
+  answer?: T;
+  category?: T;
+  relatedService?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  published?: T;
+  name?: T;
+  role?: T;
+  company?: T;
+  quote?: T;
+  photo?: T;
+  isFeatured?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -505,14 +531,14 @@ export interface SpecialModuleEntriesSelect<T extends boolean = true> {
   publicCode?: T;
   documentType?: T;
   documentNumber?: T;
-  status?: T;
+  moduleStatus?: T;
   issuedAt?: T;
   expiresAt?: T;
-  ownerName?: T;
-  publicSummary?: T;
+  summary?: T;
   publicNotes?: T;
   internalNotes?: T;
   attachment?: T;
+  ownerName?: T;
   isPublic?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -565,26 +591,33 @@ export interface SiteSetting {
   id: number;
   siteName: string;
   siteTagline?: string | null;
-  siteUrl: string;
-  businessSector?: string | null;
+  /**
+   * Selecciona el logo desde Media Library o crea uno nuevo desde este mismo selector.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Texto alternativo del logo para accesibilidad y carga SEO básica.
+   */
+  logoAlt?: string | null;
+  siteDescription?: string | null;
+  domain?: string | null;
+  /**
+   * Correo principal publico para CTA, contacto y fallback editorial del sitio.
+   */
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  address?: string | null;
+  socialLinks?:
+    | {
+        platform: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   branding?: {
     primaryColor?: string | null;
     secondaryColor?: string | null;
     accentColor?: string | null;
-    logo?: (number | null) | Media;
-  };
-  contactInfo?: {
-    email?: string | null;
-    phone?: string | null;
-    whatsApp?: string | null;
-    address?: string | null;
-  };
-  defaultSeo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    canonicalUrl?: string | null;
-    ogImage?: (number | null) | Media;
-    noIndex?: boolean | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -595,18 +628,20 @@ export interface SiteSetting {
  */
 export interface Header {
   id: number;
-  showTopbar?: boolean | null;
   topbarText?: string | null;
   navItems?:
     | {
         label: string;
-        href: string;
+        url: string;
         id?: string | null;
       }[]
     | null;
-  cta?: {
-    label?: string | null;
-    href?: string | null;
+  supportLabel?: string | null;
+  supportValue?: string | null;
+  cta: {
+    label: string;
+    url: string;
+    variant: 'primary' | 'secondary';
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -618,25 +653,36 @@ export interface Header {
 export interface Footer {
   id: number;
   summary?: string | null;
-  contactInfo?: {
-    address?: string | null;
-    email?: string | null;
-    phone?: string | null;
-  };
-  navLinks?:
+  address?: string | null;
+  navigationLinks?:
     | {
         label: string;
-        href: string;
+        url: string;
         id?: string | null;
       }[]
     | null;
+  contactLinks?:
+    | {
+        label: string;
+        value: string;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  legalCta: {
+    label: string;
+    url: string;
+    variant: 'primary' | 'secondary';
+  };
   legalLinks?:
     | {
         label: string;
-        href: string;
+        url: string;
         id?: string | null;
       }[]
     | null;
+  footerBadge?: string | null;
+  copyright?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -651,16 +697,57 @@ export interface HomePage {
     title: string;
     subtitle?: string | null;
     description?: string | null;
-    heroImage?: (number | null) | Media;
+    /**
+     * Slides opcionales del hero. Si se cargan, el frontend los puede usar como alternativa editorial sin romper el modelo actual.
+     */
+    slides?:
+      | {
+          label: string;
+          title: string;
+          description: string;
+          /**
+           * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector. Recomendado: formato horizontal y alta calidad.
+           */
+          image?: (number | null) | Media;
+          alt?: string | null;
+          visualBadge?: string | null;
+          cornerLabel?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    visualBadge?: string | null;
+    cornerLabel?: string | null;
+    /**
+     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector. Recomendado: formato horizontal de alta calidad.
+     */
+    heroMedia?: (number | null) | Media;
+    primaryCta: {
+      label: string;
+      url: string;
+      variant: 'primary' | 'secondary';
+    };
+    secondaryCta: {
+      label: string;
+      url: string;
+      variant: 'primary' | 'secondary';
+    };
+    trustItems?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
   };
-  stats?:
-    | {
-        label: string;
-        value: string;
-        id?: string | null;
-      }[]
-    | null;
-  servicesHighlightMode?: ('featured' | 'all') | null;
+  statsBar?: {
+    items?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   servicesSection?: {
     eyebrow?: string | null;
     title?: string | null;
@@ -670,48 +757,104 @@ export interface HomePage {
     eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    /**
+     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector. Ideal para hangar, equipo o foto institucional.
+     */
+    image?: (number | null) | Media;
+    highlights?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   certificationsSection?: {
+    eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          meta?: string | null;
+          linkLabel?: string | null;
+          linkUrl?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   pricingSection?: {
+    eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    items?:
+      | {
+          badge?: string | null;
+          title: string;
+          description: string;
+          cta: {
+            label: string;
+            url: string;
+            variant: 'primary' | 'secondary';
+          };
+          id?: string | null;
+        }[]
+      | null;
   };
   industriesSection?: {
+    eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          meta?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   valuesSection?: {
+    eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    items?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
   };
-  ctaBanner?: {
+  ctaBanner: {
     title?: string | null;
     description?: string | null;
-    label?: string | null;
-    href?: string | null;
+    primaryCta: {
+      label: string;
+      url: string;
+      variant: 'primary' | 'secondary';
+    };
+    secondaryCta: {
+      label: string;
+      url: string;
+      variant: 'primary' | 'secondary';
+    };
   };
   contactSection?: {
+    eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
   };
-  /**
-   * Referencia CMS-friendly de la composición objetivo del home basada en el HTML aprobado.
-   */
-  homeReferenceSections?:
-    | {
-        section: string;
-        id?: string | null;
-      }[]
-    | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
     canonicalUrl?: string | null;
+    /**
+     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector.
+     */
     ogImage?: (number | null) | Media;
     noIndex?: boolean | null;
+    schemaType?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -724,21 +867,8 @@ export interface AboutPage {
   id: number;
   heroTitle: string;
   heroDescription?: string | null;
-  story?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  storyTitle?: string | null;
+  storyBody?: string | null;
   values?:
     | {
         title: string;
@@ -750,8 +880,12 @@ export interface AboutPage {
     metaTitle?: string | null;
     metaDescription?: string | null;
     canonicalUrl?: string | null;
+    /**
+     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector.
+     */
     ogImage?: (number | null) | Media;
     noIndex?: boolean | null;
+    schemaType?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -781,19 +915,30 @@ export interface ServicesPage {
  */
 export interface ContactPage {
   id: number;
-  heroTitle: string;
-  heroDescription?: string | null;
-  formIntro?: string | null;
-  /**
-   * Fragmento iframe o URL de mapa cuando el cliente lo confirme.
-   */
-  mapEmbed?: string | null;
+  title: string;
+  description?: string | null;
+  formTitle?: string | null;
+  formDescription?: string | null;
+  formButtonLabel?: string | null;
+  contactCards?:
+    | {
+        label: string;
+        value: string;
+        url?: string | null;
+        ctaLabel?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
     canonicalUrl?: string | null;
+    /**
+     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector.
+     */
     ogImage?: (number | null) | Media;
     noIndex?: boolean | null;
+    schemaType?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -826,32 +971,26 @@ export interface SpecialModulePage {
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   siteTagline?: T;
-  siteUrl?: T;
-  businessSector?: T;
+  logo?: T;
+  logoAlt?: T;
+  siteDescription?: T;
+  domain?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  address?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
   branding?:
     | T
     | {
         primaryColor?: T;
         secondaryColor?: T;
         accentColor?: T;
-        logo?: T;
-      };
-  contactInfo?:
-    | T
-    | {
-        email?: T;
-        phone?: T;
-        whatsApp?: T;
-        address?: T;
-      };
-  defaultSeo?:
-    | T
-    | {
-        metaTitle?: T;
-        metaDescription?: T;
-        canonicalUrl?: T;
-        ogImage?: T;
-        noIndex?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -862,20 +1001,22 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
-  showTopbar?: T;
   topbarText?: T;
   navItems?:
     | T
     | {
         label?: T;
-        href?: T;
+        url?: T;
         id?: T;
       };
+  supportLabel?: T;
+  supportValue?: T;
   cta?:
     | T
     | {
         label?: T;
-        href?: T;
+        url?: T;
+        variant?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -887,27 +1028,38 @@ export interface HeaderSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   summary?: T;
-  contactInfo?:
-    | T
-    | {
-        address?: T;
-        email?: T;
-        phone?: T;
-      };
-  navLinks?:
+  address?: T;
+  navigationLinks?:
     | T
     | {
         label?: T;
-        href?: T;
+        url?: T;
         id?: T;
+      };
+  contactLinks?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        url?: T;
+        id?: T;
+      };
+  legalCta?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        variant?: T;
       };
   legalLinks?:
     | T
     | {
         label?: T;
-        href?: T;
+        url?: T;
         id?: T;
       };
+  footerBadge?: T;
+  copyright?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -924,16 +1076,54 @@ export interface HomePageSelect<T extends boolean = true> {
         title?: T;
         subtitle?: T;
         description?: T;
-        heroImage?: T;
+        slides?:
+          | T
+          | {
+              label?: T;
+              title?: T;
+              description?: T;
+              image?: T;
+              alt?: T;
+              visualBadge?: T;
+              cornerLabel?: T;
+              id?: T;
+            };
+        visualBadge?: T;
+        cornerLabel?: T;
+        heroMedia?: T;
+        primaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              variant?: T;
+            };
+        secondaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              variant?: T;
+            };
+        trustItems?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
       };
-  stats?:
+  statsBar?:
     | T
     | {
-        label?: T;
-        value?: T;
-        id?: T;
+        items?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
       };
-  servicesHighlightMode?: T;
   servicesSection?:
     | T
     | {
@@ -947,50 +1137,108 @@ export interface HomePageSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         description?: T;
+        image?: T;
+        highlights?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
       };
   certificationsSection?:
     | T
     | {
+        eyebrow?: T;
         title?: T;
         description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              meta?: T;
+              linkLabel?: T;
+              linkUrl?: T;
+              id?: T;
+            };
       };
   pricingSection?:
     | T
     | {
+        eyebrow?: T;
         title?: T;
         description?: T;
+        items?:
+          | T
+          | {
+              badge?: T;
+              title?: T;
+              description?: T;
+              cta?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    variant?: T;
+                  };
+              id?: T;
+            };
       };
   industriesSection?:
     | T
     | {
+        eyebrow?: T;
         title?: T;
         description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              meta?: T;
+              id?: T;
+            };
       };
   valuesSection?:
     | T
     | {
+        eyebrow?: T;
         title?: T;
         description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
       };
   ctaBanner?:
     | T
     | {
         title?: T;
         description?: T;
-        label?: T;
-        href?: T;
+        primaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              variant?: T;
+            };
+        secondaryCta?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              variant?: T;
+            };
       };
   contactSection?:
     | T
     | {
+        eyebrow?: T;
         title?: T;
         description?: T;
-      };
-  homeReferenceSections?:
-    | T
-    | {
-        section?: T;
-        id?: T;
       };
   seo?:
     | T
@@ -1000,6 +1248,7 @@ export interface HomePageSelect<T extends boolean = true> {
         canonicalUrl?: T;
         ogImage?: T;
         noIndex?: T;
+        schemaType?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1012,7 +1261,8 @@ export interface HomePageSelect<T extends boolean = true> {
 export interface AboutPageSelect<T extends boolean = true> {
   heroTitle?: T;
   heroDescription?: T;
-  story?: T;
+  storyTitle?: T;
+  storyBody?: T;
   values?:
     | T
     | {
@@ -1028,6 +1278,7 @@ export interface AboutPageSelect<T extends boolean = true> {
         canonicalUrl?: T;
         ogImage?: T;
         noIndex?: T;
+        schemaType?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1059,10 +1310,20 @@ export interface ServicesPageSelect<T extends boolean = true> {
  * via the `definition` "contact-page_select".
  */
 export interface ContactPageSelect<T extends boolean = true> {
-  heroTitle?: T;
-  heroDescription?: T;
-  formIntro?: T;
-  mapEmbed?: T;
+  title?: T;
+  description?: T;
+  formTitle?: T;
+  formDescription?: T;
+  formButtonLabel?: T;
+  contactCards?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        url?: T;
+        ctaLabel?: T;
+        id?: T;
+      };
   seo?:
     | T
     | {
@@ -1071,6 +1332,7 @@ export interface ContactPageSelect<T extends boolean = true> {
         canonicalUrl?: T;
         ogImage?: T;
         noIndex?: T;
+        schemaType?: T;
       };
   updatedAt?: T;
   createdAt?: T;

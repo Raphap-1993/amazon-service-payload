@@ -17,6 +17,8 @@ import { ContactPage } from './src/globals/ContactPage.ts'
 import { Footer } from './src/globals/Footer.ts'
 import { Header } from './src/globals/Header.ts'
 import { HomePage } from './src/globals/HomePage.ts'
+import { ServicesPage } from './src/globals/ServicesPage.ts'
+import { SpecialModulePage } from './src/globals/SpecialModulePage.ts'
 import { SiteSettings } from './src/globals/SiteSettings.ts'
 
 const filename = fileURLToPath(import.meta.url)
@@ -38,7 +40,16 @@ export default buildConfig({
     Testimonials,
     SpecialModuleEntries,
   ],
-  globals: [SiteSettings, Header, Footer, HomePage, AboutPage, ContactPage],
+  globals: [
+    SiteSettings,
+    Header,
+    Footer,
+    HomePage,
+    AboutPage,
+    ServicesPage,
+    ContactPage,
+    SpecialModulePage,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'dev-payload-secret-change-me',
   typescript: {

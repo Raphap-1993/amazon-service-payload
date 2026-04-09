@@ -1,10 +1,12 @@
 import { Barlow, Barlow_Condensed, JetBrains_Mono } from 'next/font/google'
 import type { Metadata } from 'next'
+
+import { getMetadataBase, getSiteUrl } from '@/lib/site-config'
+
 import './styles.css'
 
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://placeholder.local:3000'
-const siteUrl = /^https?:\/\//.test(rawSiteUrl) ? rawSiteUrl : `https://${rawSiteUrl}`
-const metadataBase = new URL(siteUrl)
+const siteUrl = getSiteUrl()
+const metadataBase = getMetadataBase()
 
 const bodyFont = Barlow({
   display: 'swap',

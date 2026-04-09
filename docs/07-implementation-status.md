@@ -67,11 +67,13 @@ Existen páginas públicas estáticas ya integradas al mismo chrome del home:
 - runtime local estable con PostgreSQL en Docker, Node 20 y scripts de `dev`/`build` ajustados;
 - `payload.config.ts` y el perímetro del CMS corregidos para resolución ESM más predecible fuera del bundler de Next.
 - metadata base, canonical, Open Graph y Twitter aplicados sobre home e internas;
+- helper centralizado para `NEXT_PUBLIC_SITE_URL` usando `3004` como fallback local por defecto;
 - `robots.txt` y `sitemap.xml` expuestos desde App Router;
 - JSON-LD conservador tipo `LocalBusiness` expuesto desde el layout público.
 - matriz mínima de acceso aplicada: `superadmin` para usuarios y settings, `admin` para operaciones y `editor` para contenido editorial.
 - soporte de marca visual preparado para logo real desde `Site Settings`;
 - imágenes reales del home preparadas vía `Home Page > Hero Image` y `Home Page > About Image`.
+- globals editoriales de `ServicesPage` y `SpecialModulePage` activados en Payload para alinear schema y admin con la estructura ya prevista.
 
 ## Checklist de validación de fase
 
@@ -106,19 +108,19 @@ Estado actual:
 
 Bloqueos reales antes de publicar:
 
-- `NEXT_PUBLIC_SITE_URL` sigue en `http://placeholder.local:3000`, por lo que canonical, `robots.txt` y `sitemap.xml` todavía apuntan al placeholder;
 - el formulario público sigue siendo visual y no persiste todavía en `ContactSubmissions`;
 - no se ha ejecutado aún el checklist operativo de VPS, backups y TLS;
 - falta una revisión final con contenido real, media real y credenciales definitivas.
 
 ## Nota de validación local
 
-- `docker compose up -d`: correcto; PostgreSQL queda `healthy` en `127.0.0.1:55433`.
+- `pnpm docker:up`: correcto; PostgreSQL queda `healthy` en `127.0.0.1:55433`.
 - `pnpm install`: correcto usando Node `20.20.2`.
 - `pnpm dev`: correcto usando Node `20.20.2`; `GET /` y `GET /admin` responden `200`.
 - `pnpm build`: correcto usando Node `20.20.2` y `NODE_OPTIONS=--max-old-space-size=4096`.
 - `GET /robots.txt`: correcto.
 - `GET /sitemap.xml`: correcto.
-- `pnpm lint`: sigue exponiendo deuda previa en `src/lib/home/getHomePageData.ts` por múltiples usos de `any`; no bloquea runtime ni build.
+- `pnpm lint`: correcto.
+- `pnpm generate:types`: correcto usando el parche idempotente de runtime incluido en `scripts/patch-runtime-deps.mjs`.
 - el primer hit en frío sigue siendo más lento porque Payload hace `Pulling schema from database` al inicializar el adapter Postgres; es esperado y no bloqueante.
 - la matriz mínima real de acceso está documentada en `docs/11-admin-access-matrix.md`.

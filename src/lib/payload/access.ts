@@ -31,6 +31,7 @@ export const isSuperAdmin: Access = ({ req: { user } }) => userHasRole(user, ['s
 export const isEditorOrAdmin: Access = ({ req: { user } }) =>
   userHasRole(user, ['admin', 'editor'])
 export const isAdminOnly: Access = ({ req: { user } }) => userHasRole(user, ['admin'])
+export const publicRead: Access = () => true
 
 export const publishedOrAuthenticated: Access = ({ req: { user } }) => {
   if (user) {

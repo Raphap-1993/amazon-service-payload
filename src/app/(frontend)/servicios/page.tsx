@@ -13,26 +13,59 @@ export const revalidate = 60
 export default async function ServicesPage() {
   const chrome = await getHomePageData()
   const page = staticPages.services
+  const primaryContactHref =
+    chrome.contactSection.cards.find((card) => card.href?.startsWith('mailto:'))?.href ||
+    'mailto:aasperu@amazonaviationservice.com'
 
   return (
     <PageShell chrome={chrome}>
-      <PageHero {...page.hero} />
+      <PageHero
+        {...page.hero}
+        actions={[
+          {
+            label: 'Escribir por correo',
+            href: primaryContactHref,
+            variant: 'primary',
+          },
+          page.hero.actions[1],
+        ]}
+      />
 
       <section className="section section--light">
-        <div className="container">
-          <SectionHeading
-            description="Servicios principales presentados con lenguaje claro, respaldo visible y foco en continuidad operacional."
-            eyebrow="Servicios principales"
-            title="Servicios principales"
-          />
-          <div className="page-card-grid">
-            {page.coreServices.map((item) => (
-              <article className="page-card" key={item.title}>
-                <div className="card-meta">{item.meta}</div>
-                <h3>{item.title}</h3>
-                <p className="card-copy">{item.description}</p>
+        <div className="container page-section__grid">
+          <div>
+            <SectionHeading
+              description="La oferta se lee en el orden real del negocio: mantenimiento como eje principal, luego inspeccion, reparacion y soporte documental."
+              eyebrow="Oferta tecnica"
+              title="Servicios organizados por prioridad operativa"
+            />
+            <div className="page-card-grid">
+              {page.coreServices.map((item) => (
+                <article className="page-card" key={item.title}>
+                  <div className="card-meta">{item.meta}</div>
+                  <h3>{item.title}</h3>
+                  <p className="card-copy">{item.description}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="page-side-panel">
+            <div className="page-side-panel__label">Como leer esta oferta</div>
+            <div className="page-card-stack">
+              <article className="page-card">
+                <h3>Mantenimiento como servicio central</h3>
+                <p className="card-copy">
+                  La pagina prioriza el trabajo de mantenimiento porque es el punto de entrada mas fuerte para operadores que buscan continuidad y seguridad operacional.
+                </p>
               </article>
-            ))}
+              <article className="page-card">
+                <h3>Capacidades y certificacion como respaldo</h3>
+                <p className="card-copy">
+                  El resto de servicios funciona como soporte para validar alcance tecnico, orden documental y capacidad de respuesta.
+                </p>
+              </article>
+            </div>
           </div>
         </div>
       </section>
@@ -41,9 +74,9 @@ export default async function ServicesPage() {
         <div className="container page-section__grid">
           <div>
             <SectionHeading
-              description="Las capacidades visibles ayudan a entender el alcance tecnico y a reducir incertidumbre antes del contacto."
+              description="Las capacidades visibles permiten entender el alcance tecnico real y bajar incertidumbre antes de la consulta formal."
               eyebrow="Capacidades"
-              title="Capacidades que fortalecen la confianza comercial"
+              title="Capacidades que respaldan el servicio"
             />
             <ul className="page-list">
               {page.capabilities.map((item) => (
@@ -71,9 +104,12 @@ export default async function ServicesPage() {
           <div className="page-strip">
             <div>
               <div className="page-strip__label">Siguiente paso</div>
-              <h2>Si necesitas una evaluacion inicial, el siguiente paso es una consulta directa.</h2>
+              <h2>Si necesitas una evaluacion inicial, escribe por correo con el tipo de aeronave y el requerimiento principal.</h2>
             </div>
-            <ActionLink link={{ label: 'Solicitar cotizacion', href: '/contacto', variant: 'primary' }} />
+            <div className="page-hero__actions">
+              <ActionLink link={{ label: 'Escribir por correo', href: primaryContactHref, variant: 'primary' }} />
+              <ActionLink link={{ label: 'Ir a contacto', href: '/contacto', variant: 'secondary' }} />
+            </div>
           </div>
         </div>
       </section>

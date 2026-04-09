@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { publicRead } from '@/lib/access'
+import { publicRead } from '../lib/access.ts'
 import { isAdminOrSuperAdmin } from '../lib/payload/access.ts'
 import { linkGroup } from '../lib/payload/fields.ts'
 

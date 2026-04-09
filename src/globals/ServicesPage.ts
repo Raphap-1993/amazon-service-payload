@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
-import { isEditorOrAbove, publicRead } from '@/lib/access'
-import { seoFields } from '@/lib/seoFields'
+import { isEditorOrAbove, publicRead } from '../lib/access.ts'
+import { seoFields } from '../lib/seoFields.ts'
 
 export const ServicesPage: GlobalConfig = {
   slug: 'services-page',

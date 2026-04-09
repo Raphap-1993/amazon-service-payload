@@ -10,7 +10,168 @@ import type {
 } from './types'
 import { defaultHomeData } from './defaultHomeData'
 
-/* eslint-disable @typescript-eslint/no-explicit-any -- Payload generated types remain pending while config ESM resolution is stabilized. */
+type RawLink = {
+  label?: string | null
+  url?: string | null
+  variant?: string | null
+}
+
+type RawValueLabelItem = {
+  value?: string | null
+  label?: string | null
+}
+
+type RawHeroSlide = {
+  alt?: string | null
+  cornerLabel?: string | null
+  description?: string | null
+  image?: unknown
+  label?: string | null
+  title?: string | null
+  visualBadge?: string | null
+}
+
+type RawCertificationItem = {
+  description?: string | null
+  linkLabel?: string | null
+  linkUrl?: string | null
+  meta?: string | null
+  title?: string | null
+}
+
+type RawPricingItem = {
+  badge?: string | null
+  cta?: RawLink | null
+  description?: string | null
+  title?: string | null
+}
+
+type RawSimpleCardItem = {
+  description?: string | null
+  meta?: string | null
+  title?: string | null
+}
+
+type RawContactCard = {
+  ctaLabel?: string | null
+  label?: string | null
+  url?: string | null
+  value?: string | null
+}
+
+type RawSiteSettings = {
+  address?: string | null
+  contactEmail?: string | null
+  contactPhone?: string | null
+  logo?: unknown
+  logoAlt?: string | null
+  siteDescription?: string | null
+  siteName?: string | null
+  siteTagline?: string | null
+}
+
+type RawHeader = {
+  cta?: RawLink | null
+  navItems?: RawLink[] | null
+  supportLabel?: string | null
+  supportValue?: string | null
+  topbarText?: string | null
+}
+
+type RawFooter = {
+  contactLinks?: RawContactCard[] | null
+  copyright?: string | null
+  footerBadge?: string | null
+  legalCta?: RawLink | null
+  legalLinks?: RawLink[] | null
+  navigationLinks?: RawLink[] | null
+  summary?: string | null
+}
+
+type RawHomePage = {
+  aboutSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    highlights?: RawValueLabelItem[] | null
+    image?: unknown
+    title?: string | null
+  } | null
+  certificationsSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    items?: RawCertificationItem[] | null
+    title?: string | null
+  } | null
+  contactSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    title?: string | null
+  } | null
+  ctaBanner?: {
+    description?: string | null
+    primaryCta?: RawLink | null
+    secondaryCta?: RawLink | null
+    title?: string | null
+  } | null
+  hero?: {
+    cornerLabel?: string | null
+    description?: string | null
+    eyebrow?: string | null
+    heroMedia?: unknown
+    primaryCta?: RawLink | null
+    secondaryCta?: RawLink | null
+    slides?: RawHeroSlide[] | null
+    subtitle?: string | null
+    title?: string | null
+    trustItems?: RawValueLabelItem[] | null
+    visualBadge?: string | null
+  } | null
+  industriesSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    items?: RawSimpleCardItem[] | null
+    title?: string | null
+  } | null
+  pricingSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    items?: RawPricingItem[] | null
+    title?: string | null
+  } | null
+  servicesSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    title?: string | null
+  } | null
+  statsBar?: {
+    items?: RawValueLabelItem[] | null
+  } | null
+  valuesSection?: {
+    description?: string | null
+    eyebrow?: string | null
+    items?: RawSimpleCardItem[] | null
+    title?: string | null
+  } | null
+}
+
+type RawContactPage = {
+  contactCards?: RawContactCard[] | null
+  formButtonLabel?: string | null
+  formDescription?: string | null
+  formTitle?: string | null
+}
+
+type RawService = {
+  cardMeta?: string | null
+  homeOrder?: number | null
+  icon?: string | null
+  summary?: string | null
+  title?: string | null
+}
+
+type RawCollectionResult<TItem> = {
+  docs?: TItem[] | null
+}
 
 const legacyRouteMap: Record<string, string> = {
   '#inicio': '/',
@@ -55,12 +216,12 @@ function mapMedia(media: unknown): { alt: string; url?: string } {
   return { alt, url }
 }
 
-function mapHeroSlide(item: unknown, fallback: HeroSlideData): HeroSlideData {
-  if (!item || typeof item !== 'object') {
+function mapHeroSlide(item: RawHeroSlide | null | undefined, fallback: HeroSlideData): HeroSlideData {
+  if (!item) {
     return fallback
   }
 
-  const image = 'image' in item ? mapMedia(item.image) : { alt: '', url: undefined }
+  const image = mapMedia(item.image)
 
   return {
     label: 'label' in item && typeof item.label === 'string' && item.label ? item.label : fallback.label,
@@ -85,26 +246,18 @@ function mapHeroSlide(item: unknown, fallback: HeroSlideData): HeroSlideData {
   }
 }
 
-function buildDefaultContactCards(siteSettings: unknown): ContactCardData[] {
-  const settings = siteSettings as
-    | {
-        address?: unknown
-        contactEmail?: unknown
-        contactPhone?: unknown
-      }
-    | undefined
-
+function buildDefaultContactCards(siteSettings?: RawSiteSettings | null): ContactCardData[] {
   const email =
-    typeof settings?.contactEmail === 'string' && settings.contactEmail
-      ? settings.contactEmail
+    typeof siteSettings?.contactEmail === 'string' && siteSettings.contactEmail.trim()
+      ? siteSettings.contactEmail.trim()
       : defaultHomeData.contactSection.cards[0].value
   const phone =
-    typeof settings?.contactPhone === 'string' && settings.contactPhone
-      ? settings.contactPhone
+    typeof siteSettings?.contactPhone === 'string' && siteSettings.contactPhone.trim()
+      ? siteSettings.contactPhone.trim()
       : defaultHomeData.contactSection.cards[1].value
   const address =
-    typeof settings?.address === 'string' && settings.address
-      ? settings.address
+    typeof siteSettings?.address === 'string' && siteSettings.address.trim()
+      ? siteSettings.address.trim()
       : defaultHomeData.contactSection.cards[2].value
 
   return [
@@ -151,15 +304,53 @@ function mapContactCard(item: unknown, fallback: ContactCardData): ContactCardDa
   }
 }
 
-function buildDefaultFooterContact(siteSettings: unknown): FooterContactLinkData[] {
+function buildDefaultFooterContact(siteSettings?: RawSiteSettings | null): FooterContactLinkData[] {
   const defaults = defaultHomeData.footer.contact
   const derivedCards = buildDefaultContactCards(siteSettings)
 
-  return defaults.map((item: FooterContactLinkData, index: number) => ({
-    label: item.label,
-    value: derivedCards[index]?.value || item.value,
-    href: derivedCards[index]?.href || item.href,
-  }))
+  return prioritizeContactCards(
+    defaults.map((item: FooterContactLinkData, index: number) => ({
+      label: item.label,
+      value: derivedCards[index]?.value || item.value,
+      href: derivedCards[index]?.href || item.href,
+    })),
+  )
+}
+
+function getContactCardPriority(card: { href?: string; label: string; value: string }): number {
+  const haystack = `${card.label} ${card.value}`.toLowerCase()
+
+  if (card.href?.startsWith('mailto:') || haystack.includes('correo') || haystack.includes('email')) {
+    return 0
+  }
+
+  if (
+    card.href?.startsWith('tel:') ||
+    haystack.includes('telefono') ||
+    haystack.includes('tel') ||
+    haystack.includes('phone')
+  ) {
+    return 1
+  }
+
+  return 2
+}
+
+function prioritizeContactCards<T extends { href?: string; label: string; value: string }>(
+  cards: T[],
+): T[] {
+  return cards
+    .map((card, index) => ({ card, index }))
+    .sort((left, right) => {
+      const priorityDelta = getContactCardPriority(left.card) - getContactCardPriority(right.card)
+
+      if (priorityDelta !== 0) {
+        return priorityDelta
+      }
+
+      return left.index - right.index
+    })
+    .map(({ card }) => card)
 }
 
 function mapFooterContactLink(item: unknown, fallback: FooterContactLinkData): FooterContactLinkData {
@@ -201,21 +392,22 @@ export async function getHomePageData(): Promise<HomePageData> {
         }),
       ])
 
-    const siteSettings = rawSiteSettings as any
-    const header = rawHeader as any
-    const footer = rawFooter as any
-    const homePage = rawHomePage as any
-    const contactPage = rawContactPage as any
-    const servicesDocs = Array.isArray((rawServices as any)?.docs) ? (rawServices as any).docs : []
+    const siteSettings = rawSiteSettings as RawSiteSettings | null
+    const header = rawHeader as RawHeader | null
+    const footer = rawFooter as RawFooter | null
+    const homePage = rawHomePage as RawHomePage | null
+    const contactPage = rawContactPage as RawContactPage | null
+    const servicesResult = rawServices as RawCollectionResult<RawService>
+    const servicesDocs = Array.isArray(servicesResult.docs) ? servicesResult.docs : []
 
     const heroMedia = mapMedia(homePage?.hero?.heroMedia)
     const aboutMedia = mapMedia(homePage?.aboutSection?.image)
     const logoMedia = mapMedia(siteSettings?.logo)
     const defaultContactCards = buildDefaultContactCards(siteSettings)
     const defaultFooterContact = buildDefaultFooterContact(siteSettings)
-    const heroSlides =
+    const heroSlides: HeroSlideData[] =
       Array.isArray(homePage?.hero?.slides) && homePage.hero.slides.length > 0
-        ? homePage.hero.slides.map((item: any, index: number) =>
+        ? homePage.hero.slides.map((item, index) =>
             mapHeroSlide(item, {
               label: defaultHomeData.hero.slides[index]?.label || defaultHomeData.hero.eyebrow,
               title: defaultHomeData.hero.slides[index]?.title || defaultHomeData.hero.title,
@@ -237,7 +429,7 @@ export async function getHomePageData(): Promise<HomePageData> {
       aboutMedia.url || heroSlides.find((slide) => slide.imageUrl)?.imageUrl || heroMedia.url
     const aboutFallbackAlt =
       aboutMedia.alt || heroSlides.find((slide) => slide.imageAlt)?.imageAlt || heroMedia.alt
-    const orderedServices = [...servicesDocs].sort((left: any, right: any) => {
+    const orderedServices = [...servicesDocs].sort((left, right) => {
       const leftOrder = typeof left.homeOrder === 'number' ? left.homeOrder : Number.MAX_SAFE_INTEGER
       const rightOrder =
         typeof right.homeOrder === 'number' ? right.homeOrder : Number.MAX_SAFE_INTEGER
@@ -248,6 +440,11 @@ export async function getHomePageData(): Promise<HomePageData> {
 
       return (left.title || '').localeCompare(right.title || '')
     })
+    const primaryContactEmail =
+      typeof siteSettings?.contactEmail === 'string' && siteSettings.contactEmail.trim()
+        ? siteSettings.contactEmail.trim()
+        : defaultHomeData.contactSection.cards[0].value
+    const primaryContactHref = `mailto:${primaryContactEmail}`
 
     return {
       topbarText: header?.topbarText || defaultHomeData.topbarText,
@@ -272,23 +469,29 @@ export async function getHomePageData(): Promise<HomePageData> {
       },
       navItems:
         Array.isArray(header?.navItems) && header.navItems.length > 0
-          ? header.navItems.map((item: any, index: number) =>
+          ? header.navItems.map((item, index) =>
               mapLink(item, defaultHomeData.navItems[index] || defaultHomeData.navItems[0]),
             )
           : defaultHomeData.navItems,
-      headerCta: mapLink(header?.cta, defaultHomeData.headerCta),
+      headerCta: mapLink(header?.cta, {
+        ...defaultHomeData.headerCta,
+        href: primaryContactHref,
+      }),
       hero: {
         eyebrow: homePage?.hero?.eyebrow || defaultHomeData.hero.eyebrow,
         title: homePage?.hero?.title || defaultHomeData.hero.title,
         subtitle: homePage?.hero?.subtitle || defaultHomeData.hero.subtitle,
         description: homePage?.hero?.description || defaultHomeData.hero.description,
         actions: [
-          mapLink(homePage?.hero?.primaryCta, defaultHomeData.hero.actions[0]),
+          mapLink(homePage?.hero?.primaryCta, {
+            ...defaultHomeData.hero.actions[0],
+            href: primaryContactHref,
+          }),
           mapLink(homePage?.hero?.secondaryCta, defaultHomeData.hero.actions[1]),
         ],
         trustItems:
           Array.isArray(homePage?.hero?.trustItems) && homePage.hero.trustItems.length > 0
-            ? homePage.hero.trustItems.map((item: any, index: number) => ({
+            ? homePage.hero.trustItems.map((item, index) => ({
                 value:
                   (typeof item?.value === 'string' && item.value) ||
                   defaultHomeData.hero.trustItems[index]?.value ||
@@ -311,7 +514,7 @@ export async function getHomePageData(): Promise<HomePageData> {
       },
       stats:
         Array.isArray(homePage?.statsBar?.items) && homePage.statsBar.items.length > 0
-          ? homePage.statsBar.items.map((item: any, index: number) => ({
+          ? homePage.statsBar.items.map((item, index) => ({
               value:
                 (typeof item?.value === 'string' && item.value) ||
                 defaultHomeData.stats[index]?.value ||
@@ -330,7 +533,7 @@ export async function getHomePageData(): Promise<HomePageData> {
       },
       services:
         orderedServices.length > 0
-          ? orderedServices.map((service: any, index: number) => ({
+          ? orderedServices.map((service, index) => ({
               title: service.title || defaultHomeData.services[0].title,
               description: service.summary || defaultHomeData.services[0].description,
               meta:
@@ -348,7 +551,7 @@ export async function getHomePageData(): Promise<HomePageData> {
         highlights:
           Array.isArray(homePage?.aboutSection?.highlights) && homePage.aboutSection.highlights.length > 0
             ? homePage.aboutSection.highlights
-                .map((item: any) =>
+                .map((item) =>
                   typeof item?.value === 'string'
                     ? item.value
                     : typeof item?.label === 'string'
@@ -371,7 +574,7 @@ export async function getHomePageData(): Promise<HomePageData> {
         items:
           Array.isArray(homePage?.certificationsSection?.items) &&
           homePage.certificationsSection.items.length > 0
-            ? homePage.certificationsSection.items.map((item: any, index: number) => ({
+            ? homePage.certificationsSection.items.map((item, index) => ({
                 title:
                   (typeof item?.title === 'string' && item.title) ||
                   defaultHomeData.certificationsSection.items[index]?.title ||
@@ -402,7 +605,7 @@ export async function getHomePageData(): Promise<HomePageData> {
           homePage?.pricingSection?.description || defaultHomeData.pricingSection.description,
         items:
           Array.isArray(homePage?.pricingSection?.items) && homePage.pricingSection.items.length > 0
-            ? homePage.pricingSection.items.map((item: any, index: number) => ({
+            ? homePage.pricingSection.items.map((item, index) => ({
                 badge:
                   (typeof item?.badge === 'string' && item.badge) ||
                   defaultHomeData.pricingSection.items[index]?.badge ||
@@ -431,7 +634,7 @@ export async function getHomePageData(): Promise<HomePageData> {
         items:
           Array.isArray(homePage?.industriesSection?.items) &&
           homePage.industriesSection.items.length > 0
-            ? homePage.industriesSection.items.map((item: any, index: number) => ({
+            ? homePage.industriesSection.items.map((item, index) => ({
                 title:
                   (typeof item?.title === 'string' && item.title) ||
                   defaultHomeData.industriesSection.items[index]?.title ||
@@ -454,7 +657,7 @@ export async function getHomePageData(): Promise<HomePageData> {
           homePage?.valuesSection?.description || defaultHomeData.valuesSection.description,
         items:
           Array.isArray(homePage?.valuesSection?.items) && homePage.valuesSection.items.length > 0
-            ? homePage.valuesSection.items.map((item: any, index: number) => ({
+            ? homePage.valuesSection.items.map((item, index) => ({
                 title:
                   (typeof item?.title === 'string' && item.title) ||
                   defaultHomeData.valuesSection.items[index]?.title ||
@@ -470,7 +673,10 @@ export async function getHomePageData(): Promise<HomePageData> {
         title: homePage?.ctaBanner?.title || defaultHomeData.ctaBanner.title,
         description: homePage?.ctaBanner?.description || defaultHomeData.ctaBanner.description,
         actions: [
-          mapLink(homePage?.ctaBanner?.primaryCta, defaultHomeData.ctaBanner.actions[0]),
+          mapLink(homePage?.ctaBanner?.primaryCta, {
+            ...defaultHomeData.ctaBanner.actions[0],
+            href: primaryContactHref,
+          }),
           mapLink(homePage?.ctaBanner?.secondaryCta, defaultHomeData.ctaBanner.actions[1]),
         ],
       },
@@ -484,34 +690,36 @@ export async function getHomePageData(): Promise<HomePageData> {
           contactPage?.formDescription || defaultHomeData.contactSection.formDescription,
         formButtonLabel:
           contactPage?.formButtonLabel || defaultHomeData.contactSection.formButtonLabel,
-        cards:
+        cards: prioritizeContactCards(
           Array.isArray(contactPage?.contactCards) && contactPage.contactCards.length > 0
-            ? contactPage.contactCards.map((item: any, index: number) =>
+            ? contactPage.contactCards.map((item, index) =>
                 mapContactCard(item, defaultContactCards[index] || defaultContactCards[0]),
               )
             : defaultContactCards,
+        ),
       },
       footer: {
         summary:
           footer?.summary || siteSettings?.siteDescription || defaultHomeData.footer.summary,
         navigation:
           Array.isArray(footer?.navigationLinks) && footer.navigationLinks.length > 0
-            ? footer.navigationLinks.map((item: any, index: number) =>
+            ? footer.navigationLinks.map((item, index) =>
                 mapLink(
                   item,
                   defaultHomeData.footer.navigation[index] || defaultHomeData.footer.navigation[0],
                 ),
               )
             : defaultHomeData.footer.navigation,
-        contact:
+        contact: prioritizeContactCards(
           Array.isArray(footer?.contactLinks) && footer.contactLinks.length > 0
-            ? footer.contactLinks.map((item: any, index: number) =>
+            ? footer.contactLinks.map((item, index) =>
                 mapFooterContactLink(item, defaultFooterContact[index] || defaultFooterContact[0]),
               )
             : defaultFooterContact,
+        ),
         legal:
           Array.isArray(footer?.legalLinks) && footer.legalLinks.length > 0
-            ? footer.legalLinks.map((item: any, index: number) =>
+            ? footer.legalLinks.map((item, index) =>
                 mapLink(item, defaultHomeData.footer.legal[index] || defaultHomeData.footer.legal[0]),
               )
             : footer?.legalCta

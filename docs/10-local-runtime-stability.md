@@ -27,6 +27,7 @@ Se confirmó lo siguiente:
 - `package.json` ajustado a `NODE_OPTIONS=--max-old-space-size=4096 next build`;
 - `payload.config.ts` actualizado a imports explícitos `.ts` para el perímetro del CMS;
 - collections y globals cargados por Payload actualizados para usar imports relativos compatibles con ESM fuera del bundler;
+- `scripts/patch-runtime-deps.mjs` incorporado para aplicar workarounds idempotentes a `undici` y al bin de Payload durante `postinstall`;
 - `tsconfig.json` actualizado con `allowImportingTsExtensions`.
 
 ## Pasos correctos de arranque
@@ -34,25 +35,31 @@ Se confirmó lo siguiente:
 ### Camino recomendado
 
 1. usar Node `20.20.2`;
-2. levantar PostgreSQL:
+2. preparar variables locales:
 
 ```bash
-docker compose up -d
+cp .env.example .env
 ```
 
-3. instalar dependencias:
+3. levantar PostgreSQL:
+
+```bash
+pnpm docker:up
+```
+
+4. instalar dependencias:
 
 ```bash
 pnpm install
 ```
 
-4. arrancar desarrollo:
+5. arrancar desarrollo:
 
 ```bash
 pnpm dev
 ```
 
-5. validar producción local:
+6. validar producción local:
 
 ```bash
 pnpm build
@@ -70,18 +77,17 @@ npx -y node@20 $(which pnpm) build
 
 ## Validación real
 
-- `docker compose up -d`: correcto
-- `docker compose ps`: PostgreSQL `healthy`
+- `pnpm docker:up`: correcto
+- `pnpm docker:ps`: PostgreSQL `healthy`
 - `npx -y node@20 $(which pnpm) install --frozen-lockfile`: correcto
 - `npx -y node@20 $(which pnpm) dev`: correcto
 - `GET /`: `200 OK`
 - `GET /admin`: `200 OK`
 - `npx -y node@20 $(which pnpm) build`: correcto
+- `pnpm generate:types`: correcto
 
 ## Riesgos residuales
 
-- `pnpm lint` sigue fallando por deuda previa en `src/lib/home/getHomePageData.ts` debido a usos de `any`;
-- `payload generate:types` no quedó estabilizado en esta fase y sigue siendo una deuda separada del runtime local;
 - la primera respuesta en frío puede tardar varios segundos por el `schema pull` inicial del adapter Postgres.
 
 ## Conclusión operativa

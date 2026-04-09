@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { publicRead } from '@/lib/access'
+import { publicRead } from '../lib/access.ts'
 import { isSuperAdmin } from '../lib/payload/access.ts'
 
 const mediaLibraryHelperComponent = {
@@ -67,6 +67,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'contactEmail',
       type: 'email',
       defaultValue: 'aasperu@amazonaviationservice.com',
+      admin: {
+        description: 'Correo principal publico para CTA, contacto y fallback editorial del sitio.',
+        placeholder: 'correo@empresa.com',
+      },
     },
     {
       name: 'contactPhone',

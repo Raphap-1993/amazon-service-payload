@@ -23,7 +23,7 @@ Documentar la matriz mínima real de permisos del panel admin para `superadmin`,
 ### `admin`
 
 - puede autenticarse en el panel;
-- puede gestionar `Header`, `Footer` y `SpecialModuleEntries`;
+- puede gestionar `Header`, `Footer`, `SpecialModulePage` y `SpecialModuleEntries`;
 - puede operar `ContactSubmissions`;
 - puede crear, actualizar y borrar contenido en `Services`, `Media`, `FAQs` y `Testimonials`;
 - no puede gestionar usuarios;
@@ -32,7 +32,7 @@ Documentar la matriz mínima real de permisos del panel admin para `superadmin`,
 ### `editor`
 
 - puede autenticarse en el panel;
-- puede actualizar superficies editoriales como `HomePage`, `AboutPage` y `ContactPage`;
+- puede actualizar superficies editoriales como `HomePage`, `AboutPage`, `ServicesPage` y `ContactPage`;
 - puede crear y actualizar contenido en `Services`, `Media`, `FAQs` y `Testimonials`;
 - no puede borrar contenido editorial;
 - no puede gestionar `Users`, `SiteSettings`, `ContactSubmissions` ni `SpecialModuleEntries`.
@@ -42,8 +42,8 @@ Documentar la matriz mínima real de permisos del panel admin para `superadmin`,
 - La colección [Users](/Users/rapha/Projects/amazon-service-payload/src/collections/Users.ts) expone `superadmin`, `admin` y `editor`.
 - La colección [Users](/Users/rapha/Projects/amazon-service-payload/src/collections/Users.ts) queda restringida a `superadmin`.
 - [SiteSettings](/Users/rapha/Projects/amazon-service-payload/src/globals/SiteSettings.ts) queda reservado a `superadmin` para `update`.
-- [Header](/Users/rapha/Projects/amazon-service-payload/src/globals/Header.ts) y [Footer](/Users/rapha/Projects/amazon-service-payload/src/globals/Footer.ts) quedan en `admin` o `superadmin`.
-- [HomePage](/Users/rapha/Projects/amazon-service-payload/src/globals/HomePage.ts), [AboutPage](/Users/rapha/Projects/amazon-service-payload/src/globals/AboutPage.ts) y [ContactPage](/Users/rapha/Projects/amazon-service-payload/src/globals/ContactPage.ts) quedan en `editor` o superior.
+- [Header](/Users/rapha/Projects/amazon-service-payload/src/globals/Header.ts), [Footer](/Users/rapha/Projects/amazon-service-payload/src/globals/Footer.ts) y [SpecialModulePage](/Users/rapha/Projects/amazon-service-payload/src/globals/SpecialModulePage.ts) quedan en `admin` o `superadmin`.
+- [HomePage](/Users/rapha/Projects/amazon-service-payload/src/globals/HomePage.ts), [AboutPage](/Users/rapha/Projects/amazon-service-payload/src/globals/AboutPage.ts), [ServicesPage](/Users/rapha/Projects/amazon-service-payload/src/globals/ServicesPage.ts) y [ContactPage](/Users/rapha/Projects/amazon-service-payload/src/globals/ContactPage.ts) quedan en `editor` o superior.
 - [Services](/Users/rapha/Projects/amazon-service-payload/src/collections/Services.ts), [Media](/Users/rapha/Projects/amazon-service-payload/src/collections/Media.ts), [FAQs](/Users/rapha/Projects/amazon-service-payload/src/collections/FAQs.ts) y [Testimonials](/Users/rapha/Projects/amazon-service-payload/src/collections/Testimonials.ts) permiten crear/editar a `editor` o superior y borrar a `admin` o `superadmin`.
 - [ContactSubmissions](/Users/rapha/Projects/amazon-service-payload/src/collections/ContactSubmissions.ts) y [SpecialModuleEntries](/Users/rapha/Projects/amazon-service-payload/src/collections/SpecialModuleEntries.ts) quedan reservados a `admin` o `superadmin`.
 

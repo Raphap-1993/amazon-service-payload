@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useMemo, useState } from 'react'
 
 import type { HomePageData } from '@/lib/home/types'
@@ -86,12 +87,18 @@ export function HeroSection({ hero }: HeroSectionProps) {
               <div className="hero-media-stack">
                 {slides.map((slide, index) =>
                   slide.imageUrl ? (
-                    <img
-                      alt={slide.imageAlt || hero.imageAlt}
-                      className={activeIndex === index ? 'hero-media hero-media--layer is-active' : 'hero-media hero-media--layer'}
+                    <div
+                      className={activeIndex === index ? 'hero-media--layer is-active' : 'hero-media--layer'}
                       key={`${slide.title}-${index}`}
-                      src={slide.imageUrl}
-                    />
+                    >
+                      <Image
+                        alt={slide.imageAlt || hero.imageAlt}
+                        className="hero-media"
+                        fill
+                        sizes="(max-width: 960px) 100vw, 46vw"
+                        src={slide.imageUrl}
+                      />
+                    </div>
                   ) : (
                     <div
                       className={activeIndex === index ? 'hero-placeholder hero-placeholder--layer is-active' : 'hero-placeholder hero-placeholder--layer'}

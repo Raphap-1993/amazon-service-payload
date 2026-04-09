@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { publicRead } from '@/lib/access'
+import { publicRead } from '../lib/access.ts'
 import { isEditorOrAbove } from '../lib/payload/access.ts'
 import { seoGroup } from '../lib/payload/fields.ts'
 

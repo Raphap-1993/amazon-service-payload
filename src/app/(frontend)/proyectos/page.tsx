@@ -21,9 +21,9 @@ export default async function ProjectsPage() {
       <section className="section section--light">
         <div className="container">
           <SectionHeading
-            description="Los proyectos visibles ayudan a validar experiencia, secuencia operativa y capacidad de ejecucion real."
-            eyebrow="Casos documentados"
-            title="Portafolio tecnico y evidencia operativa"
+            description="Casos reales organizados para demostrar experiencia de taller, orden operativo y capacidad tecnica visible antes del contacto."
+            eyebrow="Portafolio"
+            title="Casos documentados que respaldan mantenimiento, inspeccion y reparacion"
           />
           <div className="page-rich-copy">
             {page.intro.map((paragraph) => (
@@ -34,6 +34,40 @@ export default async function ProjectsPage() {
       </section>
 
       <section className="section">
+        <div className="container page-section__grid">
+          <div>
+            <SectionHeading
+              description="La pagina de proyectos debe ayudar a un visitante institucional o privado a entender por que la empresa merece una consulta formal."
+              eyebrow="Lectura comercial"
+              title="Lo que este portafolio demuestra"
+            />
+            <ul className="page-list">
+              {page.portfolioSignals.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="page-side-panel">
+            <div className="page-side-panel__label">Enfoque del portafolio</div>
+            <div className="page-card-stack">
+              <article className="page-card">
+                <h3>Confianza para clientes institucionales y privados</h3>
+                <p className="card-copy">
+                  La seleccion de casos busca reforzar seriedad, continuidad operativa y una lectura comercial alineada con una OMA certificada.
+                </p>
+                <ul className="page-list page-list--compact">
+                  {page.hero.badges.map((badge) => (
+                    <li key={badge}>{badge}</li>
+                  ))}
+                </ul>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--light">
         <div className="container">
           <div className="page-card-grid">
             {page.cases.map((item) => (
@@ -58,10 +92,10 @@ export default async function ProjectsPage() {
         <div className="container">
           <div className="page-strip">
             <div>
-              <div className="page-strip__label">Comercial</div>
-              <h2>Esta pagina refuerza confianza antes de una consulta o cotizacion.</h2>
+              <div className="page-strip__label">Siguiente paso</div>
+              <h2>Si tu operacion necesita una referencia similar, el siguiente paso es una consulta por correo.</h2>
             </div>
-            <ActionLink link={{ label: 'Solicitar referencia', href: '/contacto', variant: 'primary' }} />
+            <ActionLink link={{ label: 'Ir a contacto', href: '/contacto', variant: 'primary' }} />
           </div>
         </div>
       </section>

@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
-import { isAdminOrSuperAdmin, publicRead } from '@/lib/access'
-import { seoFields } from '@/lib/seoFields'
+import { isAdminOrSuperAdmin, publicRead } from '../lib/access.ts'
+import { seoFields } from '../lib/seoFields.ts'
 
 export const SpecialModulePage: GlobalConfig = {
   slug: 'special-module-page',
