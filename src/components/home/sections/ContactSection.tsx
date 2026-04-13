@@ -1,5 +1,7 @@
 import type { HomePageData } from '@/lib/home/types'
 
+import { ContactMailtoForm } from '@/components/site/ContactMailtoForm'
+
 import { ActionLink } from '../primitives/ActionLink'
 import { SectionHeading } from '../primitives/SectionHeading'
 
@@ -8,25 +10,63 @@ type ContactSectionProps = {
 }
 
 export function ContactSection({ section }: ContactSectionProps) {
+  const featuredCard = section.cards[0]
+  const supportingCards = section.cards.slice(1)
+
   return (
     <section className="section section--light section--contact" id="contacto">
       <div className="container contact-layout">
-        <div>
-          <SectionHeading
-            description={section.description}
-            eyebrow={section.eyebrow}
-            title={section.title}
-          />
+        <div className="page-section__content page-section__content--contact-cards page-section__content--secondary">
+          <header className="page-rich-copy page-rich-copy--intro page-rich-copy--contact page-rich-copy--justified">
+            <SectionHeading
+              description={section.description}
+              eyebrow={section.eyebrow}
+              title={section.title}
+            />
+          </header>
 
-          <div className="contact-card-grid">
-            {section.cards.map((item) => (
-              <article className="contact-card" key={`${item.label}-${item.value}`}>
-                <small>{item.label}</small>
+          {featuredCard ? (
+            <div className="page-strip page-strip--contact page-strip--contact-home">
+              <div className="page-strip__content page-strip__content--justified">
+                <div className="page-strip__label">{featuredCard.label}</div>
+                <h2>{featuredCard.value}</h2>
+                <p>
+                  {featuredCard.href?.startsWith('mailto:')
+                    ? 'Canal preferente para consultas comerciales y tecnicas.'
+                    : featuredCard.href?.startsWith('tel:')
+                      ? 'Canal de apoyo para coordinacion directa y seguimiento inicial.'
+                      : 'Referencia de ubicacion de la base operativa en Pucallpa.'}
+                </p>
+              </div>
+              {featuredCard.href ? (
+                <div className="page-hero__actions page-hero__actions--strip page-strip__actions">
+                  <ActionLink
+                    link={{
+                      href: featuredCard.href,
+                      label: featuredCard.hrefLabel || 'Ver contacto',
+                      variant: 'primary',
+                    }}
+                    size="lg"
+                  />
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="contact-card-grid contact-card-grid--premium">
+            {supportingCards.map((item, index) => (
+              <article
+                className={`contact-card ${index === 0 ? 'contact-card--primary' : 'contact-card--support'}`}
+                key={`${item.label}-${item.value}`}
+              >
+                <div className="card-meta">{item.label}</div>
                 <strong>{item.value}</strong>
                 {item.href ? (
                   <ActionLink
                     className="card-link"
                     link={{ href: item.href, label: item.hrefLabel, variant: 'secondary' }}
+                    size="sm"
+                    tone="subtle"
                   />
                 ) : null}
               </article>
@@ -34,36 +74,16 @@ export function ContactSection({ section }: ContactSectionProps) {
           </div>
         </div>
 
-        <form className="contact-form">
-          <div className="contact-form__header">
+        <div className="page-section__content page-section__content--contact-form page-section__content--secondary">
+          <header className="contact-form__header">
             <h3>{section.formTitle}</h3>
             <p>{section.formDescription}</p>
-          </div>
-
-          <label className="form-field">
-            <span>Nombre</span>
-            <input autoComplete="name" name="name" placeholder="Tu nombre o empresa" type="text" />
-          </label>
-
-          <label className="form-field">
-            <span>Email</span>
-            <input autoComplete="email" name="email" placeholder="correo@empresa.com" type="email" />
-          </label>
-
-          <label className="form-field">
-            <span>Teléfono</span>
-            <input autoComplete="tel" name="phone" placeholder="+00 000 000 000" type="tel" />
-          </label>
-
-          <label className="form-field">
-            <span>Mensaje</span>
-            <textarea name="message" placeholder="Cuéntanos brevemente tu requerimiento." rows={5} />
-          </label>
-
-          <button className="button-link button-link--primary contact-form__submit" type="button">
-            {section.formButtonLabel}
-          </button>
-        </form>
+          </header>
+          <ContactMailtoForm
+            submitLabel={section.formButtonLabel}
+            successMessage={section.formSuccessMessage}
+          />
+        </div>
       </div>
     </section>
   )

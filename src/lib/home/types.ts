@@ -1,3 +1,5 @@
+import type { PublicThemeData } from '../theme/publicTheme'
+
 export type LinkVariant = 'primary' | 'secondary'
 
 export type LinkData = {
@@ -15,6 +17,8 @@ export type HeroSlideData = {
   cornerLabel: string
   description: string
   imageAlt: string
+  imageFocalX?: number
+  imageFocalY?: number
   imageUrl?: string
   label: string
   title: string
@@ -30,6 +34,7 @@ export type ServiceData = {
 
 export type GenericCardData = {
   description: string
+  icon?: string
   linkLabel?: string
   linkUrl?: string
   meta: string
@@ -46,8 +51,45 @@ export type PricingCardData = {
 export type ContactCardData = {
   href?: string
   hrefLabel: string
+  icon?: string
   label: string
   value: string
+}
+
+export type HomeServiceCardData = {
+  description: string
+  icon: string
+  title: string
+}
+
+export type CapabilitySectionData = {
+  description: string
+  eyebrow: string
+  items: string[]
+  omaBody: string
+  omaLabel: string
+  omaNumber: string
+  regulations: string[]
+  regulationsLabel: string
+  title: string
+}
+
+export type ProjectTileData = {
+  detail: string
+  icon: string
+  title: string
+}
+
+export type ContactFormFieldData = {
+  label: string
+  name: string
+  placeholder: string
+  type: 'email' | 'text' | 'textarea'
+}
+
+export type FloatingActionData = {
+  href: string
+  label: string
 }
 
 export type FooterContactLinkData = {
@@ -56,22 +98,47 @@ export type FooterContactLinkData = {
   value: string
 }
 
+export type MissionVisionItemData = {
+  icon: string
+  label: string
+  text: string
+}
+
+export type HomeLeadershipMemberData = {
+  description: string
+  meta: string
+  photoAlt: string
+  photoUrl?: string
+  title: string
+}
+
 export type HomePageData = {
   aboutSection: {
     description: string
     eyebrow: string
     highlights: string[]
     imageAlt: string
+    imageCaption: string
+    imageFocalX?: number
+    imageFocalY?: number
     imageUrl?: string
     placeholderLabel: string
+    secondaryImageAlt: string
+    secondaryImageFocalX?: number
+    secondaryImageFocalY?: number
+    secondaryImageUrl?: string
+    secondaryDescription: string
     title: string
   }
   brand: {
+    footerSubline: string
     name: string
     logoAlt?: string
     logoUrl?: string
+    shortName: string
     tagline: string
   }
+  theme: PublicThemeData
   certificationsSection: {
     description: string
     eyebrow: string
@@ -92,13 +159,20 @@ export type HomePageData = {
     summary: string
   }
   headerCta: LinkData
+  headerPhone: string
   hero: {
     actions: LinkData[]
+    badgeNumber: string
+    badgeText: string
     cornerLabel: string
     description: string
     eyebrow: string
     imageAlt: string
+    imageFocalX?: number
+    imageFocalY?: number
     imageUrl?: string
+    regulations: string[]
+    regulationsLabel: string
     slides: HeroSlideData[]
     subtitle: string
     title: string
@@ -111,6 +185,15 @@ export type HomePageData = {
     items: GenericCardData[]
     title: string
   }
+  leadershipSection: {
+    eyebrow: string
+    members: HomeLeadershipMemberData[]
+    title: string
+  }
+  missionVisionSection: {
+    items: MissionVisionItemData[]
+  }
+  capabilitiesSection: CapabilitySectionData
   navItems: LinkData[]
   pricingSection: {
     description: string
@@ -118,15 +201,34 @@ export type HomePageData = {
     items: PricingCardData[]
     title: string
   }
+  projectsSection: {
+    eyebrow: string
+    items: ProjectTileData[]
+    stages: string[]
+    stagesLabel: string
+    title: string
+  }
   services: ServiceData[]
   servicesSection: {
     description: string
     eyebrow: string
+    imageAlt: string
+    imageFocalX?: number
+    imageFocalY?: number
+    imageUrl?: string
+    imageCaption: string
+    items: HomeServiceCardData[]
+    placeholderLabel: string
+    secondaryDescription: string
     title: string
   }
   stats: StatData[]
   supportLabel: string
   supportValue: string
+  tickerItems: {
+    icon: string
+    value: string
+  }[]
   topbarText: string
   valuesSection: {
     description: string
@@ -140,10 +242,16 @@ export type HomePageData = {
   contactSection: {
     cards: ContactCardData[]
     description: string
+    floatingActions: {
+      phone: FloatingActionData
+      whatsapp: FloatingActionData
+    }
+    formFields: ContactFormFieldData[]
     eyebrow: string
     formButtonLabel: string
     formDescription: string
     formTitle: string
+    formSuccessMessage: string
     title: string
   }
 }

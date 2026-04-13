@@ -247,8 +247,10 @@ export interface ContactSubmission {
   id: number;
   name: string;
   email: string;
+  subject: string;
   phone?: string | null;
   company?: string | null;
+  aircraft?: string | null;
   message: string;
   sourcePage?: string | null;
   status: 'new' | 'in-review' | 'closed';
@@ -484,8 +486,10 @@ export interface ServicesSelect<T extends boolean = true> {
 export interface ContactSubmissionsSelect<T extends boolean = true> {
   name?: T;
   email?: T;
+  subject?: T;
   phone?: T;
   company?: T;
+  aircraft?: T;
   message?: T;
   sourcePage?: T;
   status?: T;
@@ -592,6 +596,14 @@ export interface SiteSetting {
   siteName: string;
   siteTagline?: string | null;
   /**
+   * Versión corta de la marca para el lockup del header público.
+   */
+  shortName?: string | null;
+  /**
+   * Subtítulo corto mostrado bajo la marca en el footer del home.
+   */
+  footerSubline?: string | null;
+  /**
    * Selecciona el logo desde Media Library o crea uno nuevo desde este mismo selector.
    */
   logo?: (number | null) | Media;
@@ -694,31 +706,23 @@ export interface HomePage {
   id: number;
   hero: {
     eyebrow?: string | null;
+    /**
+     * Admite saltos de línea para replicar el hero del HTML de referencia.
+     */
     title: string;
     subtitle?: string | null;
     description?: string | null;
-    /**
-     * Slides opcionales del hero. Si se cargan, el frontend los puede usar como alternativa editorial sin romper el modelo actual.
-     */
-    slides?:
+    regulationsLabel?: string | null;
+    regulations?:
       | {
-          label: string;
-          title: string;
-          description: string;
-          /**
-           * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector. Recomendado: formato horizontal y alta calidad.
-           */
-          image?: (number | null) | Media;
-          alt?: string | null;
-          visualBadge?: string | null;
-          cornerLabel?: string | null;
+          value: string;
           id?: string | null;
         }[]
       | null;
-    visualBadge?: string | null;
-    cornerLabel?: string | null;
+    badgeNumber?: string | null;
+    badgeText?: string | null;
     /**
-     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector. Recomendado: formato horizontal de alta calidad.
+     * Imagen principal del hero. Si se deja vacía, el frontend usará el logo o un placeholder.
      */
     heroMedia?: (number | null) | Media;
     primaryCta: {
@@ -738,6 +742,35 @@ export interface HomePage {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Slides opcionales del hero. Para la referencia HTML se usa la lectura estática, pero puedes mantener variantes editoriales.
+     */
+    slides?:
+      | {
+          label: string;
+          title: string;
+          description: string;
+          /**
+           * Imagen opcional para este slide del hero.
+           */
+          image?: (number | null) | Media;
+          alt?: string | null;
+          visualBadge?: string | null;
+          cornerLabel?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    visualBadge?: string | null;
+    cornerLabel?: string | null;
+  };
+  tickerSection?: {
+    items?:
+      | {
+          icon: string;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   statsBar?: {
     items?:
@@ -752,18 +785,86 @@ export interface HomePage {
     eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    secondaryDescription?: string | null;
+    imageCaption?: string | null;
+    /**
+     * Imagen opcional del bloque introductorio del home.
+     */
+    image?: (number | null) | Media;
+    items?:
+      | {
+          icon: string;
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   aboutSection?: {
     eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    secondaryDescription?: string | null;
+    imageCaption?: string | null;
     /**
-     * Selecciona una imagen existente desde Media Library o crea una nueva desde este mismo selector. Ideal para hangar, equipo o foto institucional.
+     * Imagen institucional del bloque nosotros del home.
      */
     image?: (number | null) | Media;
+    /**
+     * Imagen secundaria para reforzar la composicion visual del bloque nosotros del home.
+     */
+    secondaryImage?: (number | null) | Media;
     highlights?:
       | {
           value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  capabilitiesSection?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    items?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+    omaNumber?: string | null;
+    omaLabel?: string | null;
+    omaBody?: string | null;
+    regulationsLabel?: string | null;
+    regulations?:
+      | {
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  missionVisionSection?: {
+    items?:
+      | {
+          icon: string;
+          label: string;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  leadershipSection?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    members?:
+      | {
+          title: string;
+          meta: string;
+          description: string;
+          /**
+           * Foto del líder para el bloque de liderazgo del home.
+           */
+          photo?: (number | null) | Media;
+          photoAlt?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -774,11 +875,38 @@ export interface HomePage {
     description?: string | null;
     items?:
       | {
+          icon?: string | null;
           title: string;
           description: string;
           meta?: string | null;
           linkLabel?: string | null;
+          /**
+           * Documento PDF gestionado desde Media Library para esta certificación.
+           */
+          document?: (number | null) | Media;
+          /**
+           * Fallback externo opcional. Si seleccionas un PDF en Media Library, el frontend prioriza ese documento.
+           */
           linkUrl?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  projectsSection?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    items?:
+      | {
+          icon: string;
+          title: string;
+          detail: string;
+          id?: string | null;
+        }[]
+      | null;
+    stagesLabel?: string | null;
+    stages?:
+      | {
+          value: string;
           id?: string | null;
         }[]
       | null;
@@ -840,10 +968,43 @@ export interface HomePage {
       variant: 'primary' | 'secondary';
     };
   };
-  contactSection?: {
+  contactSection: {
     eyebrow?: string | null;
     title?: string | null;
     description?: string | null;
+    formTitle?: string | null;
+    formDescription?: string | null;
+    formButtonLabel?: string | null;
+    formSuccessMessage?: string | null;
+    cards?:
+      | {
+          icon?: string | null;
+          label: string;
+          value: string;
+          href?: string | null;
+          hrefLabel?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    formFields?:
+      | {
+          label: string;
+          name: string;
+          placeholder: string;
+          type: 'text' | 'email' | 'textarea';
+          id?: string | null;
+        }[]
+      | null;
+    floatingActions: {
+      whatsapp: {
+        label: string;
+        url: string;
+      };
+      phone: {
+        label: string;
+        url: string;
+      };
+    };
   };
   seo?: {
     metaTitle?: string | null;
@@ -865,10 +1026,25 @@ export interface HomePage {
  */
 export interface AboutPage {
   id: number;
+  /**
+   * Titulo principal del hero de la pagina Nosotros.
+   */
   heroTitle: string;
+  /**
+   * Descripcion principal del hero. Debe mantenerse institucional y sobria.
+   */
   heroDescription?: string | null;
+  /**
+   * Titulo del bloque institucional principal.
+   */
   storyTitle?: string | null;
+  /**
+   * Cuerpo del bloque institucional. Usa una linea en blanco para separar parrafos.
+   */
   storyBody?: string | null;
+  /**
+   * Tarjetas del bloque Mision y vision en la pagina Nosotros.
+   */
   values?:
     | {
         title: string;
@@ -876,6 +1052,27 @@ export interface AboutPage {
         id?: string | null;
       }[]
     | null;
+  leadershipSection: {
+    eyebrow?: string | null;
+    title: string;
+    /**
+     * Texto breve para contextualizar el liderazgo actual y el legado fundacional.
+     */
+    description?: string | null;
+    members?:
+      | {
+          title: string;
+          meta: string;
+          description: string;
+          /**
+           * Selecciona una foto desde Media Library. Recomendado: retrato cuadrado o vertical con el rostro centrado.
+           */
+          photo?: (number | null) | Media;
+          photoAlt?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   seo?: {
     metaTitle?: string | null;
     metaDescription?: string | null;
@@ -971,6 +1168,8 @@ export interface SpecialModulePage {
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   siteTagline?: T;
+  shortName?: T;
+  footerSubline?: T;
   logo?: T;
   logoAlt?: T;
   siteDescription?: T;
@@ -1076,20 +1275,15 @@ export interface HomePageSelect<T extends boolean = true> {
         title?: T;
         subtitle?: T;
         description?: T;
-        slides?:
+        regulationsLabel?: T;
+        regulations?:
           | T
           | {
-              label?: T;
-              title?: T;
-              description?: T;
-              image?: T;
-              alt?: T;
-              visualBadge?: T;
-              cornerLabel?: T;
+              value?: T;
               id?: T;
             };
-        visualBadge?: T;
-        cornerLabel?: T;
+        badgeNumber?: T;
+        badgeText?: T;
         heroMedia?: T;
         primaryCta?:
           | T
@@ -1112,6 +1306,31 @@ export interface HomePageSelect<T extends boolean = true> {
               label?: T;
               id?: T;
             };
+        slides?:
+          | T
+          | {
+              label?: T;
+              title?: T;
+              description?: T;
+              image?: T;
+              alt?: T;
+              visualBadge?: T;
+              cornerLabel?: T;
+              id?: T;
+            };
+        visualBadge?: T;
+        cornerLabel?: T;
+      };
+  tickerSection?:
+    | T
+    | {
+        items?:
+          | T
+          | {
+              icon?: T;
+              value?: T;
+              id?: T;
+            };
       };
   statsBar?:
     | T
@@ -1130,6 +1349,17 @@ export interface HomePageSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         description?: T;
+        secondaryDescription?: T;
+        imageCaption?: T;
+        image?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
       };
   aboutSection?:
     | T
@@ -1137,11 +1367,65 @@ export interface HomePageSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         description?: T;
+        secondaryDescription?: T;
+        imageCaption?: T;
         image?: T;
+        secondaryImage?: T;
         highlights?:
           | T
           | {
               value?: T;
+              id?: T;
+            };
+      };
+  capabilitiesSection?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        items?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        omaNumber?: T;
+        omaLabel?: T;
+        omaBody?: T;
+        regulationsLabel?: T;
+        regulations?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+      };
+  missionVisionSection?:
+    | T
+    | {
+        items?:
+          | T
+          | {
+              icon?: T;
+              label?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  leadershipSection?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        members?:
+          | T
+          | {
+              title?: T;
+              meta?: T;
+              description?: T;
+              photo?: T;
+              photoAlt?: T;
               id?: T;
             };
       };
@@ -1154,11 +1438,34 @@ export interface HomePageSelect<T extends boolean = true> {
         items?:
           | T
           | {
+              icon?: T;
               title?: T;
               description?: T;
               meta?: T;
               linkLabel?: T;
+              document?: T;
               linkUrl?: T;
+              id?: T;
+            };
+      };
+  projectsSection?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              detail?: T;
+              id?: T;
+            };
+        stagesLabel?: T;
+        stages?:
+          | T
+          | {
+              value?: T;
               id?: T;
             };
       };
@@ -1239,6 +1546,45 @@ export interface HomePageSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         description?: T;
+        formTitle?: T;
+        formDescription?: T;
+        formButtonLabel?: T;
+        formSuccessMessage?: T;
+        cards?:
+          | T
+          | {
+              icon?: T;
+              label?: T;
+              value?: T;
+              href?: T;
+              hrefLabel?: T;
+              id?: T;
+            };
+        formFields?:
+          | T
+          | {
+              label?: T;
+              name?: T;
+              placeholder?: T;
+              type?: T;
+              id?: T;
+            };
+        floatingActions?:
+          | T
+          | {
+              whatsapp?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                  };
+              phone?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                  };
+            };
       };
   seo?:
     | T
@@ -1269,6 +1615,23 @@ export interface AboutPageSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         id?: T;
+      };
+  leadershipSection?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        members?:
+          | T
+          | {
+              title?: T;
+              meta?: T;
+              description?: T;
+              photo?: T;
+              photoAlt?: T;
+              id?: T;
+            };
       };
   seo?:
     | T

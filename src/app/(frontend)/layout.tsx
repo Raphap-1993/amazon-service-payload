@@ -11,15 +11,16 @@ const metadataBase = getMetadataBase()
 const bodyFont = Barlow({
   display: 'swap',
   subsets: ['latin'],
+  style: ['normal', 'italic'],
   variable: '--font-body',
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600'],
 })
 
 const headingFont = Barlow_Condensed({
   display: 'swap',
   subsets: ['latin'],
   variable: '--font-heading',
-  weight: ['600', '700', '800'],
+  weight: ['400', '500', '600', '700', '800'],
 })
 
 const monoFont = JetBrains_Mono({
@@ -97,6 +98,9 @@ export default function FrontendLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="es-PE">
       <body className={`${bodyFont.variable} ${headingFont.variable} ${monoFont.variable}`}>
+        <a className="skip-link" href="#contenido-principal">
+          Saltar al contenido principal
+        </a>
         <script
           dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }}
           type="application/ld+json"

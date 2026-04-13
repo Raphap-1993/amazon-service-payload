@@ -1,8 +1,7 @@
 'use client'
 
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import { useEffect, useRef } from 'react'
+import type { FocusEvent } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import type { HeroSlideData } from '@/lib/home/types'
 
@@ -12,12 +11,7 @@ type HeroTextSliderProps = {
   slides: HeroSlideData[]
 }
 
-const SLIDE_INTERVAL_MS = 9880
-const SLIDER_SLOWDOWN_FACTOR = 1.3
-
-function slow(value: number) {
-  return Number((value * SLIDER_SLOWDOWN_FACTOR).toFixed(2))
-}
+const SLIDE_INTERVAL_MS = 9200
 
 function prefersReducedMotion() {
   if (typeof window === 'undefined') {
@@ -27,88 +21,102 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+function formatSlideNumber(value: number) {
+  return String(value).padStart(2, '0')
+}
+
 export function HeroTextSlider({ activeIndex, onSlideChange, slides }: HeroTextSliderProps) {
-  const initializedRef = useRef(false)
-  const stageRef = useRef<HTMLDivElement | null>(null)
+  const [isPaused, setIsPaused] = useState(false)
+  const activeSlide = useMemo(() => slides[activeIndex] || slides[0], [activeIndex, slides])
+  const hasMultipleSlides = slides.length > 1
 
   useEffect(() => {
-    if (slides.length <= 1 || prefersReducedMotion()) {
+    if (!hasMultipleSlides || prefersReducedMotion() || isPaused) {
       return
     }
 
-    const timer = window.setInterval(() => {
+    const timer = window.setTimeout(() => {
       onSlideChange((activeIndex + 1) % slides.length)
     }, SLIDE_INTERVAL_MS)
 
-    return () => window.clearInterval(timer)
-  }, [activeIndex, onSlideChange, slides.length])
+    return () => window.clearTimeout(timer)
+  }, [activeIndex, hasMultipleSlides, isPaused, onSlideChange, slides.length])
 
-  useGSAP(
-    () => {
-      const activeSlide = stageRef.current?.querySelector<HTMLElement>('.hero-slider__slide.is-active')
-      const targets = activeSlide
-        ? Array.from(
-            activeSlide.querySelectorAll<HTMLElement>(
-              '.hero-slider__label, .hero-slider__title, .hero-slider__description',
-            ),
-          )
-        : []
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const nextTarget = event.relatedTarget
 
-      if (targets.length === 0) {
-        return
-      }
+    if (nextTarget instanceof Node && event.currentTarget.contains(nextTarget)) {
+      return
+    }
 
-      if (!initializedRef.current || prefersReducedMotion()) {
-        initializedRef.current = true
-        return
-      }
-
-      gsap.fromTo(
-        targets,
-        { autoAlpha: 0, y: 18 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: slow(0.82),
-          stagger: slow(0.08),
-          ease: 'power3.out',
-          clearProps: 'transform',
-        },
-      )
-    },
-    { dependencies: [activeIndex], scope: stageRef },
-  )
+    setIsPaused(false)
+  }
 
   return (
-    <div className="hero-slider" data-hero-slider="true">
-      <div className="hero-slider__stage" ref={stageRef}>
-        {slides.map((slide, index) => (
-          <article
-            aria-hidden={activeIndex !== index}
-            className={activeIndex === index ? 'hero-slider__slide is-active' : 'hero-slider__slide'}
-            key={`${slide.label}-${slide.title}-${index}`}
-          >
-            <p className="hero-subtitle hero-slider__label">{slide.label}</p>
-            <h1 className="hero-slider__title">{slide.title}</h1>
-            <p className="body-copy hero-slider__description">{slide.description}</p>
-          </article>
-        ))}
+    <div
+      className="hero-slider"
+      data-hero-slider="true"
+      aria-roledescription="carousel"
+      aria-label="Capacidades destacadas del hero"
+      onBlurCapture={handleBlur}
+      onFocusCapture={() => setIsPaused(true)}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className="hero-slider__meta">
+        <div className="hero-slider__meta-copy" aria-live="polite" aria-atomic="true">
+          <p className="hero-slider__eyebrow">Capacidades de taller</p>
+          {activeSlide?.title ? <p className="hero-slider__headline">{activeSlide.title}</p> : null}
+          {activeSlide?.description ? <p className="hero-slider__summary">{activeSlide.description}</p> : null}
+        </div>
+
+        {hasMultipleSlides ? (
+          <div className="hero-slider__meta-controls">
+            <p
+              aria-label={`Capacidad ${activeIndex + 1} de ${slides.length}`}
+              className="hero-slider__counter"
+            >
+              {formatSlideNumber(activeIndex + 1)}/{formatSlideNumber(slides.length)}
+            </p>
+
+            <div className="hero-slider__arrows" aria-label="Controles del slider">
+              <button
+                aria-label="Ver capacidad anterior"
+                className="hero-slider__arrow"
+                onClick={() => onSlideChange((activeIndex - 1 + slides.length) % slides.length)}
+                type="button"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <button
+                aria-label="Ver capacidad siguiente"
+                className="hero-slider__arrow"
+                onClick={() => onSlideChange((activeIndex + 1) % slides.length)}
+                type="button"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
 
-      {slides.length > 1 ? (
-        <div className="hero-slider__nav" aria-label="Mensajes destacados del hero">
-          {slides.map((slide, index) => (
-            <button
-              aria-label={`Ver mensaje ${index + 1}`}
-              aria-pressed={activeIndex === index}
-              className={activeIndex === index ? 'hero-slider__dot is-active' : 'hero-slider__dot'}
-              key={`${slide.label}-${slide.title}`}
-              onClick={() => onSlideChange(index)}
-              type="button"
-            />
-          ))}
-        </div>
-      ) : null}
+      <div className="hero-slider__cards" aria-label="Capacidades destacadas del hero">
+        {slides.map((slide, index) => (
+          <button
+            aria-label={`Ver capacidad ${index + 1}: ${slide.label}`}
+            aria-pressed={activeIndex === index}
+            className={activeIndex === index ? 'hero-slider__card is-active' : 'hero-slider__card'}
+            key={`${slide.label}-${slide.title}`}
+            onClick={() => onSlideChange(index)}
+            type="button"
+          >
+            <span className="hero-slider__card-kicker">{slide.label}</span>
+            <strong className="hero-slider__card-title">{slide.title}</strong>
+            <span className="hero-slider__card-description">{slide.visualBadge || slide.description}</span>
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

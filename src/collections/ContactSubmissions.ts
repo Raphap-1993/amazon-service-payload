@@ -11,7 +11,7 @@ export const ContactSubmissions: CollectionConfig = {
     update: isAdminOrSuperAdmin,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'status', 'createdAt'],
+    defaultColumns: ['name', 'subject', 'email', 'status', 'createdAt'],
     useAsTitle: 'name',
   },
   fields: [
@@ -26,11 +26,20 @@ export const ContactSubmissions: CollectionConfig = {
       required: true,
     },
     {
+      name: 'subject',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'phone',
       type: 'text',
     },
     {
       name: 'company',
+      type: 'text',
+    },
+    {
+      name: 'aircraft',
       type: 'text',
     },
     {

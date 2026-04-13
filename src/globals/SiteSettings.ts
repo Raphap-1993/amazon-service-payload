@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { publicRead } from '../lib/access.ts'
+import { defaultHomeData } from '../lib/home/defaultHomeData.ts'
 import { isSuperAdmin } from '../lib/payload/access.ts'
 
 const mediaLibraryHelperComponent = {
@@ -18,12 +19,28 @@ export const SiteSettings: GlobalConfig = {
       name: 'siteName',
       type: 'text',
       required: true,
-      defaultValue: 'Amazon Aviation Service',
+      defaultValue: defaultHomeData.brand.name,
     },
     {
       name: 'siteTagline',
       type: 'text',
-      defaultValue: 'OMA N°078 · Pucallpa, Peru',
+      defaultValue: defaultHomeData.brand.tagline,
+    },
+    {
+      name: 'shortName',
+      type: 'text',
+      defaultValue: defaultHomeData.brand.shortName,
+      admin: {
+        description: 'Versión corta de la marca para el lockup del header público.',
+      },
+    },
+    {
+      name: 'footerSubline',
+      type: 'text',
+      defaultValue: defaultHomeData.brand.footerSubline,
+      admin: {
+        description: 'Subtítulo corto mostrado bajo la marca en el footer del home.',
+      },
     },
     {
       name: 'logo',
@@ -47,7 +64,7 @@ export const SiteSettings: GlobalConfig = {
     {
       name: 'logoAlt',
       type: 'text',
-      defaultValue: 'Amazon Aviation Service',
+      defaultValue: defaultHomeData.brand.logoAlt,
       admin: {
         description: 'Texto alternativo del logo para accesibilidad y carga SEO básica.',
       },
@@ -55,8 +72,7 @@ export const SiteSettings: GlobalConfig = {
     {
       name: 'siteDescription',
       type: 'textarea',
-      defaultValue:
-          'Soporte tecnico aeronautico con foco regional en Ucayali, seguridad operacional y calidad verificable.',
+      defaultValue: defaultHomeData.footer.summary,
     },
     {
       name: 'domain',
@@ -75,12 +91,12 @@ export const SiteSettings: GlobalConfig = {
     {
       name: 'contactPhone',
       type: 'text',
-      defaultValue: '+51 952633100',
+      defaultValue: defaultHomeData.headerPhone,
     },
     {
       name: 'address',
       type: 'textarea',
-      defaultValue: 'Av. El Triunfo Mz. C Lote 01, Yarinacocha - Pucallpa - Peru',
+      defaultValue: defaultHomeData.contactSection.cards[0]?.value,
     },
     {
       name: 'socialLinks',

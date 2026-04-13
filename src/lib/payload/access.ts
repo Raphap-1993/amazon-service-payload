@@ -45,18 +45,6 @@ export const publishedOrAuthenticated: Access = ({ req: { user } }) => {
   }
 }
 
-export const publicMediaRead: Access = ({ req: { user } }) => {
-  if (user) {
-    return true
-  }
-
-  return {
-    visibility: {
-      equals: 'public',
-    },
-  }
-}
-
 export const publicSpecialModuleRead: Access = ({ req: { user } }) => {
   if (userHasRole(user, ['superadmin', 'admin'])) {
     return true

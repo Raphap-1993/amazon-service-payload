@@ -1,8 +1,47 @@
 import type { GlobalConfig } from 'payload'
 
 import { publicRead } from '../lib/access.ts'
+import { defaultHomeData } from '../lib/home/defaultHomeData.ts'
 import { isAdminOrSuperAdmin } from '../lib/payload/access.ts'
-import { linkGroup } from '../lib/payload/fields.ts'
+
+const mapLinkDefault = (link: { href: string; label: string; variant?: 'primary' | 'secondary' }) => ({
+  label: link.label,
+  url: link.href,
+  variant: link.variant ?? 'primary',
+})
+
+const defaultLinkGroup = (
+  name: string,
+  label: string,
+  link: { href: string; label: string; variant?: 'primary' | 'secondary' },
+) => ({
+  name,
+  label,
+  type: 'group' as const,
+  defaultValue: mapLinkDefault(link),
+  fields: [
+    {
+      name: 'label',
+      type: 'text' as const,
+      required: true,
+    },
+    {
+      name: 'url',
+      type: 'text' as const,
+      required: true,
+    },
+    {
+      name: 'variant',
+      type: 'select' as const,
+      defaultValue: 'primary',
+      options: [
+        { label: 'Primary', value: 'primary' },
+        { label: 'Secondary', value: 'secondary' },
+      ],
+      required: true,
+    },
+  ],
+})
 
 export const Header: GlobalConfig = {
   slug: 'header',
@@ -14,11 +53,15 @@ export const Header: GlobalConfig = {
     {
       name: 'topbarText',
       type: 'text',
-      defaultValue: 'Mantenimiento, inspeccion y reparacion de aeronaves en Pucallpa con respaldo OMA N°078',
+      defaultValue: defaultHomeData.topbarText,
     },
     {
       name: 'navItems',
       type: 'array',
+      defaultValue: defaultHomeData.navItems.map((item) => ({
+        label: item.label,
+        url: item.href,
+      })),
       fields: [
         {
           name: 'label',
@@ -35,13 +78,13 @@ export const Header: GlobalConfig = {
     {
       name: 'supportLabel',
       type: 'text',
-      defaultValue: 'Canales directos',
+      defaultValue: defaultHomeData.supportLabel,
     },
     {
       name: 'supportValue',
       type: 'text',
-      defaultValue: 'Correo y telefonos',
+      defaultValue: defaultHomeData.supportValue,
     },
-    linkGroup('cta', 'Header CTA'),
+    defaultLinkGroup('cta', 'Header CTA', defaultHomeData.headerCta),
   ],
 }

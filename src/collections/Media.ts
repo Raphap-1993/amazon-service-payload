@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 import {
   isAdminOrSuperAdmin,
   isEditorOrAbove,
-  publicMediaRead,
+  publicRead,
 } from '../lib/payload/access.ts'
 
 const filename = fileURLToPath(import.meta.url)
@@ -16,7 +16,7 @@ export const Media: CollectionConfig = {
   access: {
     create: isEditorOrAbove,
     delete: isAdminOrSuperAdmin,
-    read: publicMediaRead,
+    read: publicRead,
     update: isEditorOrAbove,
   },
   admin: {
@@ -51,6 +51,12 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: process.env.MEDIA_ROOT_DIR || path.resolve(dirname, '../../media'),
+    formatOptions: {
+      format: 'webp',
+      options: {
+        quality: 80,
+      },
+    },
     mimeTypes: ['image/*', 'application/pdf'],
   },
 }

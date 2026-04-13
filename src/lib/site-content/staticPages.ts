@@ -6,6 +6,7 @@ import { getMetadataBase } from '@/lib/site-config'
 type SimpleCard = {
   bullets?: string[]
   description: string
+  href?: string
   link?: LinkData
   meta?: string
   title: string
@@ -13,13 +14,14 @@ type SimpleCard = {
 
 const metadataBase = getMetadataBase()
 
-function buildMetadata(title: string, description: string, path: string): Metadata {
+function buildMetadata(title: string, description: string, path: string, keywords: string[] = []): Metadata {
   const pageUrl = new URL(path, metadataBase).toString()
 
   return {
     metadataBase,
     title,
     description,
+    keywords,
     alternates: {
       canonical: path,
     },
@@ -49,42 +51,49 @@ export const staticPages = {
       'Servicios aeronauticos y mantenimiento de aeronaves en Pucallpa | Amazon Aviation Service',
       'Mantenimiento de aeronaves, inspeccion tecnica, reparacion y capacidades certificadas con respaldo OMA N°078 en Pucallpa. Revisa servicios, proyectos y certificaciones de Amazon Aviation Service.',
       '/servicios',
+      [
+        'mantenimiento de aeronaves en Pucallpa',
+        'inspeccion aeronautica en Ucayali',
+        'reparacion de aeronaves en la Amazonia peruana',
+        'OMA 078 DGAC Peru',
+        'servicios aeronauticos en Pucallpa',
+      ],
     ),
     hero: {
       eyebrow: 'Servicios aeronauticos',
-      title: 'Mantenimiento de aeronaves como eje principal, con inspeccion, reparacion y soporte tecnico certificado.',
+      title: 'Servicios aeronauticos con mantenimiento de aeronaves como frente principal.',
       description:
-        'Amazon Aviation Service atiende mantenimiento, inspeccion y reparacion de aeronaves desde Pucallpa con una propuesta centrada en capacidad tecnica, trazabilidad documental y respaldo regulatorio visible. La empresa trabaja para FAP del Peru y entidades privadas con lectura regional y nacional.',
+        'Desde Pucallpa, Amazon Aviation Service atiende mantenimiento, inspeccion, reparacion y capacidades complementarias dentro de un marco documental visible, orientado a operadores institucionales y privados que requieren seguridad operativa y trazabilidad tecnica.',
       actions: [
         { label: 'Escribir por correo', href: 'mailto:aasperu@amazonaviationservice.com', variant: 'primary' as const },
         { label: 'Ver certificaciones', href: '/certificaciones', variant: 'secondary' as const },
       ],
-      badges: ['OMA N°078', 'Pucallpa · Ucayali', 'Amazonia peruana'],
+      badges: ['OMA N°078', 'Pucallpa · Ucayali', 'FAP y privados'],
     },
     coreServices: [
       {
         title: 'Mantenimiento de aeronaves',
         meta: 'Mantenimiento',
         description:
-          'Servicio principal orientado a conservar la aeronave en condiciones operativas seguras, con continuidad tecnica, control documental y soporte de taller.',
+          'Servicio principal orientado a sostener aeronavegabilidad, continuidad operativa y control documental sobre la aeronave atendida.',
       },
       {
         title: 'Inspeccion programada y no programada',
         meta: 'Inspeccion',
         description:
-          'Inspecciones tecnicas alineadas con la lista de capacidades y con referencias regulatorias para diagnostico, seguimiento y control documental.',
+          'Inspecciones tecnicas para diagnostico, seguimiento y validacion del estado operativo dentro del alcance publicado.',
       },
       {
         title: 'Reparacion de aeronaves',
         meta: 'Reparacion',
         description:
-          'Trabajos de mantenimiento correctivo y reparacion con foco en integridad estructural, disponibilidad y ejecucion tecnica ordenada.',
+          'Trabajos correctivos y de reparacion con foco en integridad estructural, continuidad de servicio y ejecucion tecnica ordenada.',
       },
       {
         title: 'Cumplimiento tecnico y documental',
         meta: 'Soporte',
         description:
-          'Acompanamiento en capacidades visibles, referencias RAP y documentacion tecnica para sostener una operacion clara, verificable y lista para auditoria.',
+          'Soporte apoyado en capacidades visibles, referencias tecnicas y documentacion para una operacion clara, verificable y lista para auditoria.',
       },
     ] satisfies SimpleCard[],
     capabilities: [
@@ -105,12 +114,12 @@ export const staticPages = {
       {
         title: 'Operacion certificada',
         description:
-          'La propuesta comercial se apoya en OMA N°078, lista de capacidades visible y una narrativa coherente con el trabajo aeronautico regulado.',
+          'La propuesta comercial se apoya en OMA N°078, lista de capacidades visible y una narrativa coherente con trabajo aeronautico regulado.',
       },
       {
         title: 'Atencion a cliente publico y privado',
         description:
-          'La comunicacion apunta a FAP del Peru y entidades privadas que valoran claridad tecnica, disponibilidad y continuidad de servicio.',
+          'La atencion se orienta a FAP del Peru y entidades privadas que valoran claridad tecnica, disponibilidad y continuidad de servicio.',
       },
       {
         title: 'Amazonia peruana como territorio de marca',
@@ -124,6 +133,11 @@ export const staticPages = {
       'Nosotros y respaldo institucional en Pucallpa | Amazon Aviation Service',
       'Conoce el perfil corporativo, la base en Pucallpa, las habilitaciones y el respaldo regulatorio de Amazon Aviation Service antes de revisar servicios y certificaciones.',
       '/nosotros',
+      [
+        'Amazon Aviation Service Pucallpa',
+        'OMA 078 Pucallpa',
+        'empresa aeronautica en Ucayali',
+      ],
     ),
     hero: {
       eyebrow: 'Nosotros',
@@ -138,23 +152,23 @@ export const staticPages = {
     },
     profile: [
       'Amazon Aviation Service S.A.C. es una Organizacion de Mantenimiento Aeronautico certificada por la DGAC (OMA N.° 078), con base principal en Pucallpa, dedicada al mantenimiento de aeronaves conforme a los estandares tecnicos y regulatorios vigentes.',
-      'La empresa fue fundada por el Sr. Rudolf Wiedler Eberli, especialista en mantenimiento aeronautico con amplia experiencia y licencias internacionales, quien contribuyo a la consolidacion tecnica del taller.',
+      'La empresa se consolido a partir del impulso fundador del Sr. Rudolf Wiedler Eberli, cuya trayectoria tecnica y aporte al taller forman parte del legado institucional de Amazon Aviation Service.',
       'Este proyecto fue desarrollado a nivel familiar y empresarial, logrando la certificacion como Organizacion de Mantenimiento Aeronautico (OMA N.° 078).',
-      'Actualmente, la empresa se encuentra bajo la direccion de Nayra Saavedra Alvis Vda. de Wiedler, abogada con amplia experiencia en temas aeronauticos, quien ha asumido la gestion y conduccion de la organizacion, participando en el proceso de certificacion ante la DGAC y garantizando la continuidad operativa, el cumplimiento normativo y el fortalecimiento institucional.',
+      'Actualmente, la empresa se encuentra bajo la direccion de Nayra Saavedra Alvis Vda. de Wiedler, responsable de la gestion institucional, la continuidad operativa, el cumplimiento normativo y la relacion de la organizacion ante la DGAC.',
       'La empresa cuenta con un equipo de tecnicos altamente calificados y en constante capacitacion, lo que permite asegurar la prestacion de servicios confiables y seguros, con proyeccion de crecimiento y participacion en el desarrollo de la aviacion a nivel regional y nacional.',
     ],
     leadership: [
       {
         title: 'Rudolf Wiedler Eberli',
-        meta: 'Fundador',
+        meta: 'Legado fundador',
         description:
-          'Especialista tecnico con trayectoria en mantenimiento aeronautico y consolidacion del taller como base de trabajo certificada.',
+          'Su vision y trabajo contribuyeron a la consolidacion tecnica del taller y hoy forman parte del legado institucional de la empresa.',
       },
       {
         title: 'Nayra Saavedra Alvis Vda. de Wiedler',
-        meta: 'Direccion',
+        meta: 'Direccion general',
         description:
-          'Responsable de la continuidad institucional, el cumplimiento normativo y la conduccion de la organizacion ante la DGAC.',
+          'Responsable de la continuidad institucional, la conduccion actual de la organizacion y la relacion con la DGAC.',
       },
     ] satisfies SimpleCard[],
     qualityBlocks: [
@@ -203,6 +217,11 @@ export const staticPages = {
       'Proyectos de mantenimiento, inspeccion y reparacion de aeronaves en Pucallpa | Amazon Aviation Service',
       'Revisa proyectos y trabajos realizados por Amazon Aviation Service en mantenimiento, inspeccion y reparacion estructural de aeronaves en Pucallpa. Si buscas un servicio similar, revisa servicios, certificaciones o contacto.',
       '/proyectos',
+      [
+        'proyectos de mantenimiento de aeronaves en Pucallpa',
+        'reparacion estructural de aeronaves en Peru',
+        'trabajos aeronauticos Amazon Aviation Service',
+      ],
     ),
     hero: {
       eyebrow: 'Proyectos',
@@ -274,28 +293,34 @@ export const staticPages = {
       'Certificaciones DGAC y OMA N°078 en Pucallpa | Amazon Aviation Service',
       'Consulta el certificado OMA N°078, la lista de capacidades, el sistema de gestion de calidad y los documentos de respaldo tecnico de Amazon Aviation Service.',
       '/certificaciones',
+      [
+        'certificado OMA 078',
+        'certificaciones DGAC Peru',
+        'lista de capacidades OMA 78',
+        'mantenimiento aeronautico certificado en Pucallpa',
+      ],
     ),
     hero: {
       eyebrow: 'Certificaciones',
-      title: 'Respaldo documental y regulatorio visible para una decision con menos riesgo.',
+      title: 'Respaldo documental y regulatorio visible para una decision con mayor confianza.',
       description:
-        'La certificacion OMA, la lista de capacidades, el sistema de gestion de calidad y los documentos asociados ofrecen una base visible para validar el alcance tecnico y reducir incertidumbre al momento de contactar.',
+        'La certificacion OMA, la lista de capacidades, el sistema de gestion de calidad y los documentos asociados ofrecen una base visible para validar el alcance tecnico antes de una consulta formal.',
       actions: [
         { label: 'Escribir por correo', href: 'mailto:aasperu@amazonaviationservice.com', variant: 'primary' as const },
         { label: 'Volver a servicios', href: '/servicios', variant: 'secondary' as const },
       ],
-      badges: ['OMA N°078', 'DGAC', 'PDFs disponibles'],
+      badges: ['OMA N°078', 'DGAC', 'Capacidades publicadas'],
     },
     intro: [
-      'La documentacion visible confirma la certificacion OMA N°078 y la existencia de una lista de capacidades asociada.',
-      'El alcance presentado se mantiene dentro de los documentos reales accesibles desde esta web y se usa como respaldo comercial antes de una consulta tecnica.',
+      'La documentacion visible confirma la condicion OMA N°078 y presenta una base objetiva para revisar el alcance tecnico de la organizacion.',
+      'El recorrido documental ayuda a validar certificacion, capacidades y soporte antes de preparar una consulta tecnica o comercial por correo.',
     ],
     documents: [
       {
         title: 'Certificado OMA N°078',
         meta: 'Documento regulatorio',
         description:
-          'Acredita a la organizacion ante la DGAC y funciona como la pieza principal de validacion para visitantes y operadores.',
+          'Acredita a la organizacion ante la DGAC y funciona como la pieza central de validacion institucional para visitantes y operadores.',
         link: {
           label: 'Ver PDF',
           href: 'https://amazonaviationservice.com/wp-content/uploads/2024/09/Certificado-OMA-N%C2%B0078.pdf',
@@ -306,7 +331,7 @@ export const staticPages = {
         title: 'Lista de capacidades OMA 78',
         meta: 'Documento regulatorio',
         description:
-          'Relaciona habilitaciones, limitaciones y alcances visibles para mantenimiento e inspeccion.',
+          'Relaciona habilitaciones, limitaciones y alcances visibles para mantenimiento, inspeccion y capacidades complementarias.',
         link: {
           label: 'Abrir PDF',
           href: 'https://amazonaviationservice.com/wp-content/uploads/2024/09/OMA_78_Lista_de_Capacidades.pdf',
@@ -317,7 +342,7 @@ export const staticPages = {
         title: 'Capacidades UFA',
         meta: 'Documento complementario',
         description:
-          'Soporte documental complementario relacionado con el alcance tecnico visible y la continuidad de la operacion.',
+          'Soporte documental complementario relacionado con el alcance tecnico visible y la continuidad operativa del servicio.',
         link: {
           label: 'Revisar PDF',
           href: 'https://amazonaviationservice.com/wp-content/uploads/2024/11/lista-de-capacidades.pdf',
@@ -326,9 +351,9 @@ export const staticPages = {
       },
     ] satisfies SimpleCard[],
     guardrails: [
-      'El alcance operativo debe revisarse junto a la lista de capacidades vigente.',
-      'La informacion presentada se limita a documentos y referencias visibles.',
-      'Los documentos se presentan con lenguaje tecnico, ordenado y respaldo verificable.',
+      'Confirma la condicion OMA N°078 y la referencia documental asociada.',
+      'Contrasta el servicio que necesitas con la lista de capacidades publicada.',
+      'Usa estos documentos como respaldo inicial antes de una consulta tecnica formal.',
     ],
   },
   contact: {
@@ -336,12 +361,17 @@ export const staticPages = {
       'Contacto por correo para mantenimiento de aeronaves en Pucallpa | Amazon Aviation Service',
       'Solicita informacion o cotizacion para mantenimiento, inspeccion y reparacion de aeronaves en Pucallpa, Ucayali. El correo es el canal preferente para consultas tecnicas y comerciales.',
       '/contacto',
+      [
+        'correo de contacto Amazon Aviation Service',
+        'cotizacion mantenimiento de aeronaves en Pucallpa',
+        'contacto tecnico aeronautico en Ucayali',
+      ],
     ),
     hero: {
       eyebrow: 'Contacto',
-      title: 'Un canal comercial y tecnico claro para operadores que necesitan respuesta.',
+      title: 'Correo comercial y tecnico para consultas sobre mantenimiento de aeronaves.',
       description:
-        'El contacto esta pensado para cotizaciones, consultas tecnicas y coordinacion inicial desde Pucallpa, con una presentacion clara y empresarial. Si estas evaluando una solicitud, escribe por correo primero y revisa servicios y certificaciones.',
+        'El canal principal de Amazon Aviation Service es el correo. Desde ahi se reciben solicitudes de mantenimiento, inspeccion y reparacion con informacion suficiente para orientar una primera respuesta desde Pucallpa.',
       actions: [
         {
           label: 'Escribir por correo',
@@ -350,7 +380,7 @@ export const staticPages = {
         },
         { label: 'Ver certificaciones', href: '/certificaciones', variant: 'secondary' as const },
       ],
-      badges: ['Respuesta tecnica', 'Pucallpa', 'Canales directos'],
+      badges: ['Correo preferente', 'Pucallpa', 'Respuesta inicial'],
     },
     contactCards: [
       {
@@ -385,9 +415,9 @@ export const staticPages = {
       },
     ] satisfies SimpleCard[],
     notes: [
-      'Si buscas una respuesta formal, escribe por correo y deja el tipo de aeronave como primer dato.',
-      'Indica si la necesidad es inspeccion, mantenimiento o reparacion, y el nivel de urgencia.',
-      'Agrega ubicacion, telefono, fecha tentativa y una breve descripcion del requerimiento tecnico.',
+      'Indica el tipo de aeronave y si la necesidad es mantenimiento, inspeccion o reparacion.',
+      'Incluye empresa o entidad, telefono de contacto y una fecha tentativa si ya existe.',
+      'Describe el contexto operativo y el nivel de urgencia para orientar mejor la primera respuesta.',
     ],
   },
 }
