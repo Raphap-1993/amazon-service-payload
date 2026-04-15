@@ -31,12 +31,9 @@ El proyecto queda en una transición entre cierre de `Fase 0` y apertura de `Fas
 - `docs/06-work-plan.md`
 - `docs/07-implementation-status.md`
 - `docs/08-home-reference.md`
-- `docs/09-orchestration-strategy.md`
 
 ## Carpetas base
 
-- `agents/`: agentes del proyecto y reglas de coordinación.
-- `skills/`: playbooks reutilizables por tarea.
 - `src/`: estructura objetivo del código de aplicación.
 - `infra/`: plantillas y convenciones de infraestructura.
 - `scripts/`: utilidades operativas del entorno local y soporte.
