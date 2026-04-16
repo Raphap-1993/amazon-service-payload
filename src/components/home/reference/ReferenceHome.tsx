@@ -6,6 +6,7 @@ import { buildMediaObjectPosition } from '@/components/home/primitives/mediaObje
 import { ReferenceHomeContactForm } from './ReferenceHomeContactForm'
 import { ReferenceHomeHeader } from './ReferenceHomeHeader'
 import { ReferenceHomeMotion } from './ReferenceHomeMotion'
+import { ReferenceProjectGallery } from './ReferenceProjectGallery'
 
 import styles from './ReferenceHome.module.css'
 
@@ -388,10 +389,6 @@ function cleanActionLabel(label: string) {
   return label.replace(/^[^\p{L}\p{N}]+\s*/u, '').trim()
 }
 
-function renderProjectIcon() {
-  return renderFlatIcon('aircraft', 'ref-flat-icon ref-project-icon-svg')
-}
-
 export function ReferenceHome({ data }: ReferenceHomeProps) {
   const heroImageSrc = data.hero.imageUrl || data.brand.logoUrl
   const footerSubline = data.brand.footerSubline?.trim() || 'S.A.C. · Pucallpa, Perú'
@@ -684,15 +681,7 @@ export function ReferenceHome({ data }: ReferenceHomeProps) {
                 {data.projectsSection.title}
               </h2>
             </div>
-            <div className="ref-projects-grid" role="list">
-              {data.projectsSection.items.map((item) => (
-                <article className="ref-project-card" data-fade-up="true" key={item.title} role="listitem">
-                  <div className="ref-project-icon">{renderProjectIcon()}</div>
-                  <div className="ref-project-name">{item.title}</div>
-                  <div className="ref-project-detail">{item.detail}</div>
-                </article>
-              ))}
-            </div>
+            <ReferenceProjectGallery items={data.projectsSection.items} />
             <div className="ref-stages" data-fade-up="true">
               <div className="ref-stages-label">{data.projectsSection.stagesLabel}</div>
               <div className="ref-stages-row">

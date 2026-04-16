@@ -53,10 +53,12 @@ const mediaRelationshipField = (
   label: string,
   description: string,
   mimeContains = 'image',
+  hasMany = false,
 ) => ({
   name,
   type: 'relationship' as const,
   relationTo: 'media' as const,
+  hasMany,
   label,
   filterOptions: {
     mimeType: {
@@ -620,6 +622,7 @@ export const HomePage: GlobalConfig = {
           type: 'array',
           defaultValue: defaultHomeData.projectsSection.items.map((item) => ({
             detail: item.detail,
+            gallery: item.gallery,
             icon: item.icon,
             title: item.title,
           })),
@@ -639,6 +642,13 @@ export const HomePage: GlobalConfig = {
               type: 'text',
               required: true,
             },
+            mediaRelationshipField(
+              'gallery',
+              'Galería del proyecto',
+              'Selecciona una o más imágenes desde Media Library. El orden define la secuencia del popup.',
+              'image',
+              true,
+            ),
           ],
         },
         {

@@ -900,6 +900,10 @@ export interface HomePage {
           icon: string;
           title: string;
           detail: string;
+          /**
+           * Selecciona una o más imágenes desde Media Library. El orden define la secuencia del popup.
+           */
+          gallery?: (number | Media)[] | null;
           id?: string | null;
         }[]
       | null;
@@ -1459,6 +1463,7 @@ export interface HomePageSelect<T extends boolean = true> {
               icon?: T;
               title?: T;
               detail?: T;
+              gallery?: T;
               id?: T;
             };
         stagesLabel?: T;

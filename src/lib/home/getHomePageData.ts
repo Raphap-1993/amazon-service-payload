@@ -10,6 +10,7 @@ import type {
   HomePageData,
   LinkData,
   MissionVisionItemData,
+  ProjectTileData,
 } from './types'
 import { defaultHomeData } from './defaultHomeData'
 import { buildPublicTheme } from '../theme/publicTheme'
@@ -66,6 +67,7 @@ type RawSimpleCardItem = {
 
 type RawProjectItem = {
   detail?: string | null
+  gallery?: unknown[] | null
   icon?: string | null
   title?: string | null
 }
@@ -388,18 +390,38 @@ function normalizeFocalPoint(value: unknown): number | undefined {
 function mapMedia(
   media: unknown,
   fallbackAlt?: string,
-): { alt: string; focalX?: number; focalY?: number; url?: string } {
+): { alt: string; caption?: string; focalX?: number; focalY?: number; url?: string } {
   if (!media || typeof media !== 'object') {
     return { alt: resolveAltText(fallbackAlt) }
   }
 
+  const caption = 'caption' in media && typeof media.caption === 'string' ? media.caption : undefined
   const url = 'url' in media && typeof media.url === 'string' ? media.url : undefined
   const rawAlt = 'alt' in media && typeof media.alt === 'string' ? media.alt : undefined
   const alt = resolveAltText(rawAlt, fallbackAlt)
   const focalX = 'focalX' in media ? normalizeFocalPoint(media.focalX) : undefined
   const focalY = 'focalY' in media ? normalizeFocalPoint(media.focalY) : undefined
 
-  return { alt, focalX, focalY, url }
+  return { alt, caption, focalX, focalY, url }
+}
+
+function mapProjectGallery(gallery: unknown): ProjectTileData['gallery'] {
+  if (!Array.isArray(gallery)) {
+    return []
+  }
+
+  return gallery
+    .map((item) => mapMedia(item))
+    .filter((item): item is Required<Pick<ProjectTileData['gallery'][number], 'url'>> & ProjectTileData['gallery'][number] =>
+      typeof item.url === 'string' && item.url.length > 0,
+    )
+    .map((item) => ({
+      alt: item.alt,
+      caption: item.caption,
+      focalX: item.focalX,
+      focalY: item.focalY,
+      url: item.url,
+    }))
 }
 
 function mapHeroSlide(item: RawHeroSlide | null | undefined, fallback: HeroSlideData): HeroSlideData {
@@ -995,20 +1017,25 @@ export async function getHomePageData(): Promise<HomePageData> {
         title: homePage?.projectsSection?.title || defaultHomeData.projectsSection.title,
         items:
           Array.isArray(homePage?.projectsSection?.items) && homePage.projectsSection.items.length > 0
-            ? homePage.projectsSection.items.map((item, index) => ({
-                icon:
-                  (typeof item?.icon === 'string' && item.icon) ||
-                  defaultHomeData.projectsSection.items[index]?.icon ||
-                  defaultHomeData.projectsSection.items[0].icon,
-                title:
-                  (typeof item?.title === 'string' && item.title) ||
-                  defaultHomeData.projectsSection.items[index]?.title ||
-                  defaultHomeData.projectsSection.items[0].title,
-                detail:
-                  (typeof item?.detail === 'string' && item.detail) ||
-                  defaultHomeData.projectsSection.items[index]?.detail ||
-                  defaultHomeData.projectsSection.items[0].detail,
-              }))
+            ? homePage.projectsSection.items.map((item, index) => {
+                const gallery = mapProjectGallery(item?.gallery)
+
+                return {
+                  gallery: gallery.length > 0 ? gallery : defaultHomeData.projectsSection.items[index]?.gallery || [],
+                  icon:
+                    (typeof item?.icon === 'string' && item.icon) ||
+                    defaultHomeData.projectsSection.items[index]?.icon ||
+                    defaultHomeData.projectsSection.items[0].icon,
+                  title:
+                    (typeof item?.title === 'string' && item.title) ||
+                    defaultHomeData.projectsSection.items[index]?.title ||
+                    defaultHomeData.projectsSection.items[0].title,
+                  detail:
+                    (typeof item?.detail === 'string' && item.detail) ||
+                    defaultHomeData.projectsSection.items[index]?.detail ||
+                    defaultHomeData.projectsSection.items[0].detail,
+                }
+              })
             : defaultHomeData.projectsSection.items,
         stagesLabel:
           homePage?.projectsSection?.stagesLabel || defaultHomeData.projectsSection.stagesLabel,

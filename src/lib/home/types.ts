@@ -76,8 +76,17 @@ export type CapabilitySectionData = {
 
 export type ProjectTileData = {
   detail: string
+  gallery: ProjectGalleryImageData[]
   icon: string
   title: string
+}
+
+export type ProjectGalleryImageData = {
+  alt: string
+  caption?: string
+  focalX?: number
+  focalY?: number
+  url?: string
 }
 
 export type ContactFormFieldData = {
